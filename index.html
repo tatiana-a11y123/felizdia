@@ -1,0 +1,3145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Feliz 30 de octubre</title>
+<style>
+:root{
+  --bg:#050507;
+  --panel:rgba(12,12,16,.78);
+  --line:rgba(255,255,255,.11);
+  --text:#f6f6f7;
+  --muted:#a5a5ad;
+  --red:#ff3b30;
+  --orange:#ff7a1a;
+  --amber:#ffb24a;
+  --cyan:#62d4ff;
+  --violet:#9b7cff;
+  --pink:#ff5da2;
+  --deep:#050507;
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;min-height:100%;background:#050507}
+body{overflow-x:hidden;overflow-y:auto}
+body.game-active{overflow:hidden}
+body{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text)}
+button{font:inherit}
+#game{position:fixed;inset:0}
+#game canvas{display:block;width:100%;height:100%}
+
+.vignette{
+  position:fixed;inset:0;z-index:2;pointer-events:none;
+  background:
+    radial-gradient(circle at 50% 40%,transparent 45%,rgba(0,0,0,.58) 100%),
+    linear-gradient(to bottom,rgba(255,255,255,.01),transparent 30%);
+}
+.grid{
+  position:fixed;inset:0;z-index:3;pointer-events:none;opacity:.13;
+  background-image:
+    linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
+  background-size:44px 44px;
+  mask-image:linear-gradient(to bottom,black,transparent 85%);
+}
+.topbar{
+  position:fixed;top:16px;left:50%;transform:translateX(-50%);
+  z-index:30;width:min(94vw,1120px);
+  min-height:54px;padding:10px 16px;
+  border:1px solid var(--line);border-radius:999px;
+  background:rgba(8,8,12,.58);backdrop-filter:blur(16px);
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  box-shadow:0 18px 60px rgba(0,0,0,.28)
+}
+.brand{
+  font-weight:900;font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;white-space:nowrap
+}
+.status{display:flex;align-items:center;gap:16px}
+.stat small{
+  display:block;color:#777982;font-size:.6rem;letter-spacing:.13em;text-transform:uppercase;margin-bottom:2px
+}
+.stat strong{font-size:.84rem}
+.progress{
+  width:160px;height:6px;border-radius:999px;background:rgba(255,255,255,.08);
+  overflow:hidden;border:1px solid rgba(255,255,255,.07)
+}
+#progress{
+  height:100%;width:0;background:linear-gradient(90deg,var(--red),var(--orange),var(--amber));
+  box-shadow:0 0 16px rgba(255,86,35,.5)
+}
+
+.screen{
+  position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:28px 20px
+}
+.intro{
+  position:relative;
+  inset:auto;
+  min-height:100vh;
+  z-index:20;
+  padding:120px 20px 70px;
+}
+.intro{
+  background:
+    radial-gradient(circle at 50% 35%,rgba(255,58,48,.13),transparent 34%),
+    linear-gradient(180deg,rgba(5,5,7,.1),rgba(5,5,7,.75));
+}
+.hero{
+  width:min(1160px,95vw);
+  display:grid;grid-template-columns:1.15fr .85fr;gap:30px;
+  border:1px solid rgba(255,255,255,.11);
+  border-radius:38px;
+  padding:38px;
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 12% 16%,rgba(255,76,44,.09),transparent 25%),
+    radial-gradient(circle at 92% 8%,rgba(155,124,255,.08),transparent 23%),
+    linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.025)),
+    rgba(8,8,12,.72);
+  backdrop-filter:blur(20px);
+  box-shadow:
+    0 60px 170px rgba(0,0,0,.52),
+    inset 0 1px 0 rgba(255,255,255,.05)
+}
+.hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(120deg,transparent 0 55%,rgba(255,255,255,.025) 56%,transparent 57%),
+    linear-gradient(120deg,transparent 0 72%,rgba(255,255,255,.018) 73%,transparent 74%);
+}
+.eyebrow{
+  color:#ff7958;font-size:.72rem;font-weight:900;letter-spacing:.17em;text-transform:uppercase;margin-bottom:14px
+}
+h1{
+  margin:0;
+  font-size:clamp(3.25rem,7.6vw,7.3rem);
+  line-height:.84;
+  letter-spacing:-.075em;
+  font-weight:950;
+  max-width:760px;
+  text-wrap:balance
+}
+.outline{color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.72)}
+.lead{
+  max-width:650px;margin:24px 0 0;color:#b7b7bf;line-height:1.75;
+  font-size:clamp(.98rem,1.4vw,1.1rem)
+}
+.showcase{
+  min-height:410px;border-radius:26px;border:1px solid rgba(255,255,255,.08);
+  background:
+    radial-gradient(circle at 50% 28%,rgba(255,78,44,.10),transparent 34%),
+    rgba(255,255,255,.025);
+  padding:22px;display:flex;flex-direction:column;justify-content:flex-end
+}
+.showcase h2{margin:0 0 10px;font-size:1.25rem;letter-spacing:-.03em}
+.showcase p{margin:0;color:#9c9ca5;line-height:1.6;font-size:.9rem}
+.controls{
+  margin-top:18px;display:flex;gap:8px;flex-wrap:wrap
+}
+.key{
+  height:36px;min-width:38px;padding:0 11px;border-radius:10px;
+  border:1px solid rgba(255,255,255,.11);background:rgba(255,255,255,.04);
+  color:#ddd;display:grid;place-items:center;font-size:.72rem;font-weight:900
+}
+.play{
+  margin-top:20px;width:100%;min-height:54px;border:0;border-radius:15px;cursor:pointer;
+  background:linear-gradient(135deg,#ff3b30,#ff7a1a);
+  color:#fff;font-weight:950;letter-spacing:.08em;text-transform:uppercase;
+  box-shadow:0 18px 40px rgba(255,59,48,.22);
+  transition:.2s ease
+}
+.play:hover{transform:translateY(-2px);filter:brightness(1.06)}
+
+.badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.badge{
+  padding:8px 11px;border-radius:999px;border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.035);color:#a9a9b2;font-size:.74rem
+}
+
+#message{
+  position:fixed;top:92px;left:50%;transform:translateX(-50%) translateY(-8px);
+  z-index:40;opacity:0;pointer-events:none;padding:10px 15px;border-radius:999px;
+  background:rgba(8,8,12,.74);backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.09);color:#eee;font-size:.82rem;transition:.22s ease
+}
+#message.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.countdown{
+  position:fixed;inset:0;z-index:45;display:none;place-items:center;pointer-events:none;
+  font-size:clamp(5rem,16vw,12rem);font-weight:950;letter-spacing:-.08em;
+  text-shadow:0 0 50px rgba(255,72,35,.3)
+}
+.countdown.show{display:grid}
+
+.finish{
+  opacity:0;visibility:hidden;transition:.55s ease;
+  background:
+    radial-gradient(circle at 50% 40%,rgba(255,75,35,.11),transparent 36%),
+    rgba(5,5,7,.8);backdrop-filter:blur(8px)
+}
+.finish.show{opacity:1;visibility:visible}
+.finish-card{
+  width:min(940px,94vw);display:grid;grid-template-columns:1fr 1fr;
+  overflow:hidden;border-radius:32px;border:1px solid var(--line);
+  background:#0d0d11;box-shadow:0 45px 140px rgba(0,0,0,.55)
+}
+.photo{min-height:560px;background:#111}
+.photo img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.95) contrast(1.04) brightness(.88)}
+.copy{padding:42px;display:flex;flex-direction:column;justify-content:center}
+.copy h2{margin:0 0 18px;font-size:clamp(2.5rem,5vw,5rem);line-height:.92;letter-spacing:-.055em}
+.copy p{margin:0 0 15px;color:#b3b3bc;line-height:1.7}
+.copy .small{font-size:.9rem;color:#83838c}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.secondary{
+  min-height:46px;padding:0 18px;border-radius:13px;border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.05);color:#eee;font-weight:800;cursor:pointer
+}
+.hit{position:fixed;inset:0;z-index:10;pointer-events:none;background:rgba(255,45,25,.2);opacity:0}
+.hit.flash{animation:hit .35s ease}
+@keyframes hit{0%{opacity:0}25%{opacity:1}100%{opacity:0}}
+
+.mobile{
+  position:fixed;left:0;right:0;bottom:22px;z-index:35;display:none;justify-content:center;gap:18px;pointer-events:none
+}
+.mobile button{
+  width:76px;height:58px;border-radius:18px;border:1px solid rgba(255,255,255,.11);
+  background:rgba(10,10,14,.62);backdrop-filter:blur(12px);color:#fff;font-size:1.35rem;font-weight:900;
+  pointer-events:auto
+}
+
+.sky-phrase{
+  position:fixed;
+  z-index:8;
+  left:50%;
+  top:18%;
+  transform:translate(-50%,-50%) scale(.9);
+  opacity:0;
+  pointer-events:none;
+  text-align:center;
+  width:min(88vw,900px);
+  transition:opacity .6s ease, transform .6s ease, filter .6s ease;
+  color:#fff;
+  font-weight:900;
+  letter-spacing:-.03em;
+  font-size:clamp(1.5rem,3.5vw,3.4rem);
+  text-shadow:
+    0 0 12px rgba(255,255,255,.5),
+    0 0 24px rgba(255,106,50,.75),
+    0 0 48px rgba(255,58,48,.55),
+    0 0 90px rgba(255,58,48,.35);
+  filter:blur(8px);
+}
+.sky-phrase.show{
+  opacity:1;
+  transform:translate(-50%,-50%) scale(1);
+  filter:blur(0);
+}
+.sky-phrase small{
+  display:block;
+  margin-top:8px;
+  font-size:.42em;
+  font-weight:700;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:#ffd0b4;
+}
+.sky-glow{
+  position:fixed;
+  inset:0;
+  z-index:7;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .6s ease;
+  background:
+    radial-gradient(circle at 50% 18%,rgba(255,103,53,.22),transparent 18%),
+    radial-gradient(circle at 50% 22%,rgba(255,59,48,.12),transparent 32%);
+}
+.sky-glow.show{opacity:1}
+
+
+.landing-line{
+  width:120px;height:2px;margin-top:24px;
+  background:linear-gradient(90deg,var(--red),var(--orange),transparent);
+  box-shadow:0 0 20px rgba(255,76,35,.45)
+}
+.landing-note{
+  max-width:560px;margin-top:14px;color:#85858e;line-height:1.6;font-size:.86rem
+}
+.showcase{
+  position:relative;
+  overflow:hidden;
+}
+.showcase::before{
+  content:"";
+  position:absolute;inset:-35% -20% auto auto;width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,88,42,.18),transparent 68%);
+  pointer-events:none
+}
+.showcase::after{
+  content:"";
+  position:absolute;left:22px;right:22px;bottom:96px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent)
+}
+.control-legend{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:9px;
+  color:#71717a;font-size:.62rem;text-transform:uppercase;letter-spacing:.08em
+}
+.sky-streak{
+  position:fixed;
+  z-index:6;
+  width:220px;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(255,175,110,.9),transparent);
+  opacity:0;
+  pointer-events:none;
+  filter:blur(.2px);
+  box-shadow:0 0 18px rgba(255,105,50,.45);
+}
+.nitro-wrap{
+  width:94px;height:6px;border-radius:999px;background:rgba(255,255,255,.08);
+  overflow:hidden;border:1px solid rgba(255,255,255,.06)
+}
+#nitroBar{
+  height:100%;width:100%;
+  background:linear-gradient(90deg,#55d8ff,#89f3ff);
+  box-shadow:0 0 12px rgba(85,216,255,.55)
+}
+.pause-layer{
+  position:fixed;inset:0;z-index:50;display:none;place-items:center;
+  background:rgba(5,5,8,.62);backdrop-filter:blur(8px)
+}
+.pause-layer.show{display:grid}
+.pause-card{
+  padding:28px 32px;border-radius:22px;border:1px solid rgba(255,255,255,.1);
+  background:rgba(12,12,16,.9);text-align:center;box-shadow:0 30px 100px rgba(0,0,0,.45)
+}
+.pause-card h3{margin:0 0 8px;font-size:2rem;letter-spacing:-.04em}
+.pause-card p{margin:0;color:#94949d}
+
+
+.landing-wrap{
+  position:relative;
+  z-index:15;
+  background:
+    radial-gradient(circle at 18% 20%,rgba(255,65,40,.08),transparent 30%),
+    radial-gradient(circle at 82% 72%,rgba(85,216,255,.05),transparent 30%),
+    linear-gradient(180deg,#050507,#08080b 42%,#050507);
+}
+.scroll-section{
+  min-height:92vh;
+  display:flex;
+  align-items:center;
+  padding:90px 7vw;
+  position:relative;
+}
+.scroll-section.alt{justify-content:flex-end}
+.story-card{
+  width:min(590px,92vw);
+  padding:30px;
+  border-radius:28px;
+  border:1px solid rgba(255,255,255,.1);
+  background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.028));
+  backdrop-filter:blur(16px);
+  box-shadow:0 30px 90px rgba(0,0,0,.38);
+}
+.story-card h2{
+  margin:0 0 16px;
+  font-size:clamp(2.2rem,5vw,5rem);
+  line-height:.95;
+  letter-spacing:-.055em
+}
+.story-card p{margin:0;color:#b3b3bc;line-height:1.75}
+.story-card .quote{
+  margin-top:18px;
+  padding:16px 18px;
+  border-left:3px solid var(--red);
+  background:rgba(255,59,48,.05);
+  color:#eee;
+  line-height:1.65;
+  border-radius:0 14px 14px 0
+}
+.preview-section{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:90px 20px 120px;
+}
+.preview-card{
+  width:min(980px,94vw);
+  padding:34px;
+  border-radius:32px;
+  border:1px solid rgba(255,255,255,.1);
+  background:rgba(10,10,14,.68);
+  backdrop-filter:blur(18px);
+  box-shadow:0 40px 120px rgba(0,0,0,.45);
+  text-align:center;
+}
+.preview-card h2{
+  margin:0 0 14px;
+  font-size:clamp(2.5rem,6vw,6rem);
+  letter-spacing:-.06em;
+  line-height:.92
+}
+.preview-card p{
+  max-width:680px;
+  margin:0 auto 22px;
+  color:#a9a9b2;
+  line-height:1.7
+}
+.preview-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.preview-hint{
+  margin-top:16px;
+  color:#74747d;
+  font-size:.8rem;
+  letter-spacing:.04em
+}
+.love-signature{
+  margin-top:28px;
+  font-size:clamp(1.3rem,2.5vw,2.2rem);
+  font-weight:800;
+  letter-spacing:-.03em
+}
+.love-signature span{color:#ff7457}
+#roadPreviewBadge{
+  position:fixed;
+  left:50%;bottom:24px;
+  transform:translateX(-50%);
+  z-index:60;
+  display:none;
+  padding:10px 14px;
+  border-radius:999px;
+  background:rgba(8,8,12,.72);
+  border:1px solid rgba(255,255,255,.1);
+  backdrop-filter:blur(12px);
+  color:#d8d8dd;
+  font-size:.78rem;
+}
+#roadPreviewBadge.show{display:block}
+
+
+.showcase{
+  min-height:560px;
+  padding:0;
+  position:relative;
+  overflow:hidden;
+  border-radius:28px;
+  border:1px solid rgba(255,255,255,.11);
+  background:#0f0f13;
+  box-shadow:
+    0 28px 80px rgba(0,0,0,.42),
+    inset 0 1px 0 rgba(255,255,255,.05);
+}
+.showcase-media{
+  position:absolute;
+  inset:0;
+}
+.showcase-media img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  filter:saturate(1.06) contrast(1.05) brightness(.76);
+}
+.showcase-media::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(to top,rgba(5,5,8,.96) 0%,rgba(5,5,8,.68) 34%,rgba(5,5,8,.18) 64%,rgba(5,5,8,.12) 100%),
+    linear-gradient(110deg,rgba(255,65,35,.16),transparent 42%);
+}
+.showcase-content{
+  position:relative;
+  z-index:2;
+  min-height:560px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  padding:28px;
+}
+.showcase-title{
+  font-size:clamp(1.45rem,2.4vw,2.3rem);
+  line-height:1.02;
+  letter-spacing:-.04em;
+  margin:0 0 10px;
+  max-width:420px;
+}
+.showcase-copy{
+  margin:0;
+  color:#c2c2c8;
+  line-height:1.62;
+  font-size:.9rem;
+  max-width:450px;
+}
+.image-badge{
+  position:absolute;
+  top:18px;
+  right:18px;
+  z-index:3;
+  padding:8px 11px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(6,6,9,.58);
+  backdrop-filter:blur(12px);
+  color:#ececf0;
+  font-size:.67rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.hero-left{
+  position:relative;
+  z-index:2;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  min-height:560px;
+}
+.hero-bottom-note{
+  margin-top:28px;
+  padding-top:20px;
+  border-top:1px solid rgba(255,255,255,.08);
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:18px;
+  align-items:end;
+}
+.hero-bottom-note p{
+  margin:0;
+  max-width:560px;
+  color:#7f7f88;
+  line-height:1.55;
+  font-size:.82rem;
+}
+.hero-bottom-note strong{
+  font-size:.72rem;
+  color:#e8e8ec;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.sky-theme-indicator{
+  position:fixed;
+  right:22px;
+  bottom:22px;
+  z-index:70;
+  padding:10px 14px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.09);
+  background:rgba(8,8,12,.58);
+  backdrop-filter:blur(12px);
+  color:#d8d8df;
+  font-size:.72rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  pointer-events:none;
+  opacity:.82;
+}
+.night-orb{
+  position:fixed;
+  border-radius:50%;
+  filter:blur(70px);
+  pointer-events:none;
+  z-index:1;
+  opacity:.22;
+  transition:background 1.2s ease, transform 1.2s ease;
+}
+.night-orb.one{width:320px;height:320px;left:-80px;top:18%}
+.night-orb.two{width:300px;height:300px;right:-70px;top:48%}
+.night-orb.three{width:260px;height:260px;left:38%;bottom:-120px}
+
+@media(max-width:860px){
+  .hero,.finish-card{grid-template-columns:1fr}
+  .hero{padding:24px}
+  .showcase{min-height:auto}
+  .photo{min-height:46vh}
+  .copy{padding:28px}
+  .progress{width:100px}
+  .status{gap:10px}
+  .stat:nth-child(2){display:none}
+  .mobile{display:flex}
+}
+
+/* ---------- LANDING MOTO DISTRICT ---------- */
+.hero{isolation:isolate}
+.svg-defs{position:absolute;width:0;height:0;overflow:hidden}
+.hero-moto-atmosphere{
+  position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;border-radius:38px
+}
+.hero-moto{
+  position:absolute;width:clamp(150px,18vw,290px);aspect-ratio:2.25/1;
+  opacity:.16;filter:drop-shadow(0 18px 22px rgba(0,0,0,.6)) drop-shadow(0 0 22px rgba(255,84,45,.16));
+  transform:perspective(900px) rotateZ(var(--r,0deg)) rotateY(var(--ry,0deg)) scale(var(--s,1));
+  animation:motoFloat 7s ease-in-out infinite alternate;mix-blend-mode:screen
+}
+.hero-moto svg{width:100%;height:100%;display:block}
+.hero-moto:nth-child(2n){animation-duration:9s;opacity:.11}
+.hero-moto:nth-child(3n){animation-duration:11s;filter:drop-shadow(0 18px 24px rgba(0,0,0,.6)) drop-shadow(0 0 25px rgba(98,212,255,.16))}
+@keyframes motoFloat{
+  from{translate:0 0;transform:perspective(900px) rotateZ(var(--r,0deg)) rotateY(var(--ry,0deg)) scale(var(--s,1))}
+  to{translate:20px -15px;transform:perspective(900px) rotateZ(calc(var(--r,0deg) + 2deg)) rotateY(var(--ry,0deg)) scale(var(--s,1))}
+}
+.hero-moto.m1{left:-5%;top:4%;--r:-12deg;--s:.8}
+.hero-moto.m2{left:35%;top:1%;--r:7deg;--s:.72;--ry:180deg}
+.hero-moto.m3{right:-4%;top:10%;--r:-6deg;--s:.86}
+.hero-moto.m4{left:0%;bottom:8%;--r:4deg;--s:.7;--ry:180deg}
+.hero-moto.m5{left:43%;bottom:2%;--r:-8deg;--s:.8}
+.hero-moto.m6{right:-2%;bottom:12%;--r:11deg;--s:.72;--ry:180deg}
+.hero-moto.m7{left:23%;top:43%;--r:-5deg;--s:.64}
+.hero-moto.m8{right:26%;top:39%;--r:5deg;--s:.62;--ry:180deg}
+.moto-strip{
+  margin-top:22px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;position:relative;z-index:2
+}
+.moto-strip-item{
+  min-height:76px;border:1px solid rgba(255,255,255,.08);border-radius:16px;
+  background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018));
+  display:flex;align-items:center;gap:11px;padding:12px;overflow:hidden
+}
+.moto-strip-icon{width:54px;height:34px;flex:0 0 54px;filter:drop-shadow(0 7px 8px rgba(0,0,0,.45))}
+.moto-strip-icon svg{display:block;width:100%;height:100%}
+.moto-strip-item strong{display:block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase}
+.moto-strip-item small{display:block;margin-top:3px;color:#777985;font-size:.65rem}
+.decor-bike{position:absolute;pointer-events:none;z-index:0;width:min(44vw,620px);filter:drop-shadow(0 36px 45px rgba(0,0,0,.72));opacity:.94}
+.decor-bike svg{width:100%;height:auto;display:block}
+.decor-bike .bike-stage{transform-origin:center;animation:stageFloat 6s ease-in-out infinite alternate}
+@keyframes stageFloat{from{transform:translateY(0) rotate(-1deg)}to{transform:translateY(-12px) rotate(1deg)}}
+.scroll-section{overflow:hidden}
+.scroll-section .story-card{position:relative;z-index:2}
+.scroll-section .decor-bike.left{left:52%;top:50%;transform:translate(-12%,-50%) rotate(-5deg)}
+.scroll-section.alt .decor-bike.right{right:53%;top:50%;transform:translate(12%,-50%) rotate(5deg)}
+.bike-floor{position:absolute;width:70%;height:12%;left:15%;bottom:8%;background:radial-gradient(ellipse,rgba(255,76,44,.19),rgba(0,0,0,0) 70%);filter:blur(10px)}
+@media(max-width:960px){.decor-bike{opacity:.22;width:72vw}.scroll-section .decor-bike.left,.scroll-section.alt .decor-bike.right{left:50%;right:auto;top:50%;transform:translate(-50%,-50%)} }
+.road-district{
+  margin-top:18px;padding:13px 15px;border-radius:16px;
+  border:1px solid rgba(255,255,255,.08);
+  background:linear-gradient(90deg,rgba(255,59,48,.07),rgba(98,212,255,.035));
+  display:flex;justify-content:space-between;gap:14px;align-items:center
+}
+.road-district span{font-size:.72rem;color:#8f9099}
+.road-district strong{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:#f1f1f4;white-space:nowrap}
+@media(max-width:860px){
+  .moto-strip{grid-template-columns:repeat(2,1fr)}
+  .hero-moto{opacity:.07}
+}
+
+
+/* ---------- ROSAS ROJAS 3D / LANDING + FINAL ---------- */
+.rose-garden{
+  position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;
+}
+.rose-3d{
+  --rose-size:46px;
+  position:absolute;width:var(--rose-size);height:calc(var(--rose-size)*1.45);
+  transform-style:preserve-3d;perspective:500px;
+  filter:drop-shadow(0 13px 12px rgba(0,0,0,.48)) drop-shadow(0 0 12px rgba(255,25,36,.20));
+  animation:roseSway 4.8s ease-in-out infinite alternate;
+}
+.rose-3d .stem{
+  position:absolute;left:50%;bottom:0;width:4px;height:58%;transform:translateX(-50%);
+  border-radius:8px;background:linear-gradient(90deg,#12351b,#3e7a3e,#173b20);
+  box-shadow:inset 1px 0 rgba(255,255,255,.15);
+}
+.rose-3d .leaf{
+  position:absolute;width:22px;height:11px;bottom:24%;left:47%;
+  border-radius:100% 0 100% 0;background:linear-gradient(135deg,#4d9b55,#153e21);
+  transform-origin:left center;transform:rotate(-29deg) rotateY(-24deg);
+  box-shadow:inset 0 1px rgba(255,255,255,.14);
+}
+.rose-3d .leaf.r{transform:rotate(32deg) rotateY(24deg) scaleX(-1);left:51%;bottom:34%}
+.rose-3d .bloom{
+  position:absolute;left:50%;top:4%;width:68%;aspect-ratio:1;transform:translateX(-50%) rotateX(7deg);
+  transform-style:preserve-3d;
+}
+.rose-3d .petal{
+  position:absolute;left:50%;top:50%;width:58%;height:72%;
+  border-radius:60% 50% 56% 48%;
+  transform-origin:50% 88%;
+  background:radial-gradient(circle at 35% 25%,#ff5962 0 13%,#ed1828 38%,#9d0917 72%,#53030a 100%);
+  box-shadow:inset -5px -7px 9px rgba(45,0,4,.28), inset 3px 3px 5px rgba(255,150,155,.13);
+}
+.rose-3d .petal:nth-child(1){transform:translate(-50%,-54%) rotate(0deg) rotateX(18deg) translateZ(10px) scale(.92)}
+.rose-3d .petal:nth-child(2){transform:translate(-50%,-54%) rotate(72deg) rotateX(21deg) translateZ(8px) scale(.94)}
+.rose-3d .petal:nth-child(3){transform:translate(-50%,-54%) rotate(144deg) rotateX(17deg) translateZ(9px) scale(.94)}
+.rose-3d .petal:nth-child(4){transform:translate(-50%,-54%) rotate(216deg) rotateX(22deg) translateZ(7px) scale(.91)}
+.rose-3d .petal:nth-child(5){transform:translate(-50%,-54%) rotate(288deg) rotateX(19deg) translateZ(9px) scale(.93)}
+.rose-3d .petal:nth-child(6){transform:translate(-50%,-56%) rotate(35deg) rotateX(36deg) translateZ(14px) scale(.62)}
+.rose-3d .petal:nth-child(7){transform:translate(-50%,-56%) rotate(155deg) rotateX(38deg) translateZ(15px) scale(.60)}
+.rose-3d .petal:nth-child(8){transform:translate(-50%,-56%) rotate(275deg) rotateX(36deg) translateZ(16px) scale(.58)}
+.rose-3d .core{
+  position:absolute;left:50%;top:49%;width:16%;aspect-ratio:1;border-radius:50%;
+  transform:translate(-50%,-50%) translateZ(22px);
+  background:#79050d;box-shadow:0 0 10px rgba(255,31,43,.55);
+}
+@keyframes roseSway{
+  from{transform:rotateZ(-2deg) rotateY(-6deg) translateY(0)}
+  to{transform:rotateZ(2deg) rotateY(7deg) translateY(-5px)}
+}
+.rose-garden .r1{left:1.5%;top:18%;--rose-size:58px}
+.rose-garden .r2{left:5%;top:42%;--rose-size:44px;animation-delay:-1.2s}
+.rose-garden .r3{left:1%;top:69%;--rose-size:52px;animation-delay:-2.4s}
+.rose-garden .r4{right:2%;top:25%;--rose-size:50px;animation-delay:-.7s}
+.rose-garden .r5{right:5%;top:52%;--rose-size:62px;animation-delay:-1.8s}
+.rose-garden .r6{right:1.5%;top:76%;--rose-size:45px;animation-delay:-3.1s}
+.scroll-section .rose-garden{z-index:1}
+.scroll-section .rose-garden .rose-3d{opacity:.88}
+.preview-section .rose-garden .rose-3d{opacity:.92}
+
+.photo{position:relative;overflow:visible}
+.photo-floral-frame{
+  position:absolute;inset:-24px;z-index:4;pointer-events:none;
+}
+.photo-floral-frame .rose-3d{
+  opacity:0;transform:scale(.35) rotate(-12deg);
+}
+.finish.show .photo-floral-frame .rose-3d{
+  animation:finalRoseBloom .75s cubic-bezier(.18,.89,.32,1.28) forwards, roseSway 4.5s 1s ease-in-out infinite alternate;
+}
+@keyframes finalRoseBloom{
+  0%{opacity:0;transform:scale(.2) rotate(-18deg)}
+  70%{opacity:1;transform:scale(1.12) rotate(3deg)}
+  100%{opacity:1;transform:scale(1) rotate(0)}
+}
+.photo-floral-frame .fr1{left:-20px;top:-15px;--rose-size:64px}
+.photo-floral-frame .fr2{left:-28px;top:31%;--rose-size:52px;animation-delay:.08s}
+.photo-floral-frame .fr3{left:-18px;bottom:-8px;top:auto;--rose-size:70px;animation-delay:.16s}
+.photo-floral-frame .fr4{right:-18px;top:-14px;--rose-size:68px;animation-delay:.12s}
+.photo-floral-frame .fr5{right:-30px;top:43%;--rose-size:50px;animation-delay:.2s}
+.photo-floral-frame .fr6{right:-16px;bottom:-10px;top:auto;--rose-size:72px;animation-delay:.28s}
+.photo-floral-frame .fr7{left:34%;top:-35px;--rose-size:44px;animation-delay:.18s}
+.photo-floral-frame .fr8{left:48%;bottom:-42px;top:auto;--rose-size:50px;animation-delay:.3s}
+@media(max-width:860px){
+  .rose-garden .rose-3d{opacity:.55;--rose-size:38px}
+  .photo-floral-frame{inset:-14px}
+  .photo-floral-frame .rose-3d{--rose-size:46px}
+}
+
+
+/* ---------- PRE-RIDE COCKPIT + MUSIC ---------- */
+.cockpit-layer{
+  position:fixed;inset:0;z-index:82;display:none;align-items:flex-end;justify-content:center;
+  padding:0 20px 46px;pointer-events:none;
+  background:linear-gradient(to top,rgba(2,2,5,.72),rgba(2,2,5,.08) 44%,transparent 72%);
+}
+.cockpit-layer.show{display:flex}
+.cockpit-panel{
+  width:min(720px,94vw);padding:22px 24px;border-radius:26px;
+  border:1px solid rgba(255,255,255,.13);
+  background:linear-gradient(180deg,rgba(18,18,24,.82),rgba(7,7,11,.92));
+  backdrop-filter:blur(18px);box-shadow:0 26px 90px rgba(0,0,0,.58);
+  text-align:center;pointer-events:auto;transform:translateY(24px);opacity:0;
+  transition:.45s ease;
+}
+.cockpit-layer.ready .cockpit-panel{transform:translateY(0);opacity:1}
+.cockpit-kicker{font-size:.68rem;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:#ff7558}
+.cockpit-panel h3{margin:7px 0 8px;font-size:clamp(1.8rem,4vw,3.4rem);letter-spacing:-.055em;line-height:.95}
+.cockpit-panel p{margin:0 auto 18px;max-width:540px;color:#a7a7b0;font-size:.88rem;line-height:1.6}
+.cockpit-actions{display:grid;grid-template-columns:1fr 1.4fr;gap:10px}
+.cockpit-btn{
+  min-height:56px;border-radius:16px;border:1px solid rgba(255,255,255,.12);cursor:pointer;
+  font-weight:950;letter-spacing:.08em;text-transform:uppercase;transition:.2s ease;
+}
+.cockpit-btn:hover{transform:translateY(-2px);filter:brightness(1.07)}
+.cockpit-btn.music{background:rgba(255,255,255,.06);color:#fff}
+.cockpit-btn.accelerate{background:linear-gradient(135deg,#ff3028,#ff7a1a);color:#fff;box-shadow:0 16px 38px rgba(255,59,48,.24)}
+.cockpit-btn .sub{display:block;margin-top:2px;font-size:.58rem;font-weight:700;letter-spacing:.08em;opacity:.68}
+#musicFloatBtn{
+  position:fixed;right:22px;top:86px;z-index:90;display:none;min-height:42px;padding:0 14px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);background:rgba(8,8,12,.72);backdrop-filter:blur(13px);
+  color:#fff;font-weight:850;font-size:.72rem;letter-spacing:.05em;cursor:pointer;box-shadow:0 14px 34px rgba(0,0,0,.34)
+}
+#musicFloatBtn.show{display:block}
+#musicFloatBtn.playing::before{content:'●';margin-right:7px;color:#ff453a;text-shadow:0 0 10px rgba(255,69,58,.8)}
+#musicFloatBtn.paused::before{content:'▶';margin-right:7px;color:#ff9a72}
+.cockpit-speedline{
+  position:fixed;left:50%;bottom:0;z-index:81;width:min(42vw,430px);height:2px;transform:translateX(-50%);
+  background:linear-gradient(90deg,transparent,#ff3b30,#ffb24a,#ff3b30,transparent);
+  opacity:0;box-shadow:0 0 20px rgba(255,74,45,.7);transition:.5s ease;pointer-events:none
+}
+.cockpit-speedline.show{opacity:.9}
+@media(max-width:650px){.cockpit-actions{grid-template-columns:1fr}.cockpit-panel{padding:20px 16px}#musicFloatBtn{right:12px;top:76px}}
+
+
+/* ---------- MOBILE RESPONSIVE UPGRADE ---------- */
+html,body{max-width:100%;overflow-x:hidden}
+img,svg,canvas{max-width:100%}
+
+.moto-strip-item,
+.moto-strip-item > div{
+  min-width:0;
+}
+.moto-strip-item strong,
+.moto-strip-item small{
+  overflow-wrap:anywhere;
+  word-break:normal;
+}
+.moto-strip-item strong{
+  line-height:1.15;
+}
+.moto-strip-item small{
+  line-height:1.3;
+}
+
+.mobile{
+  padding-left:max(12px,env(safe-area-inset-left));
+  padding-right:max(12px,env(safe-area-inset-right));
+  padding-bottom:max(4px,env(safe-area-inset-bottom));
+}
+.mobile .mobile-steer,
+.mobile .mobile-drive{
+  display:flex;
+  gap:10px;
+}
+.mobile button{
+  touch-action:none;
+  -webkit-user-select:none;
+  user-select:none;
+}
+.mobile .drive-btn{
+  width:64px;
+  height:58px;
+  font-size:.72rem;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+.mobile .drive-btn.turbo{
+  background:linear-gradient(135deg,rgba(49,191,255,.22),rgba(155,124,255,.22));
+}
+.mobile .drive-btn.brake{
+  background:rgba(255,59,48,.12);
+}
+
+@media(max-width:860px){
+  .intro{
+    padding:88px 14px 44px;
+  }
+  .hero{
+    width:100%;
+    padding:18px;
+    gap:20px;
+    border-radius:24px;
+  }
+  .hero-left{
+    min-height:auto;
+  }
+  h1{
+    font-size:clamp(2.65rem,14vw,4.8rem);
+    line-height:.88;
+    letter-spacing:-.065em;
+  }
+  .lead{
+    margin-top:18px;
+    font-size:.94rem;
+    line-height:1.65;
+  }
+  .badges{
+    gap:7px;
+    margin-top:16px;
+  }
+  .badge{
+    font-size:.68rem;
+    padding:7px 9px;
+  }
+  .moto-strip{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
+    margin-top:16px;
+  }
+  .moto-strip-item{
+    min-height:84px;
+    padding:10px;
+    gap:8px;
+    border-radius:14px;
+    align-items:center;
+  }
+  .moto-strip-icon{
+    width:38px;
+    height:28px;
+    flex:0 0 38px;
+  }
+  .moto-strip-item strong{
+    font-size:.61rem;
+    letter-spacing:.055em;
+  }
+  .moto-strip-item small{
+    margin-top:4px;
+    font-size:.58rem;
+  }
+  .road-district{
+    align-items:flex-start;
+    flex-direction:column;
+    padding:12px;
+  }
+  .road-district strong{
+    white-space:normal;
+  }
+  .hero-bottom-note{
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+  .showcase{
+    min-height:500px;
+    border-radius:22px;
+  }
+  .showcase-content{
+    min-height:500px;
+    padding:20px;
+  }
+  .controls{
+    gap:6px;
+  }
+  .key{
+    min-width:32px;
+    height:32px;
+    padding:0 8px;
+    font-size:.62rem;
+  }
+  .control-legend{
+    grid-template-columns:repeat(3,1fr);
+    row-gap:6px;
+  }
+  .scroll-section{
+    min-height:auto;
+    padding:72px 16px;
+  }
+  .story-card{
+    width:100%;
+    padding:22px 18px;
+    border-radius:22px;
+  }
+  .story-card h2{
+    font-size:clamp(2rem,10vw,3.8rem);
+  }
+  .preview-section{
+    min-height:auto;
+    padding:72px 14px 100px;
+  }
+  .preview-card{
+    width:100%;
+    padding:24px 18px;
+    border-radius:24px;
+  }
+  .preview-card h2{
+    font-size:clamp(2.2rem,12vw,4.4rem);
+  }
+  .finish{
+    align-items:flex-start;
+    overflow-y:auto;
+    padding:70px 12px 24px;
+  }
+  .finish-card{
+    width:100%;
+    border-radius:24px;
+  }
+  .photo{
+    min-height:52vh;
+  }
+  .copy{
+    padding:24px 20px 30px;
+  }
+  .copy h2{
+    font-size:clamp(2.3rem,12vw,4rem);
+  }
+
+  .topbar{
+    top:8px;
+    width:calc(100vw - 16px);
+    min-height:48px;
+    padding:8px 10px;
+    gap:8px;
+    border-radius:18px;
+  }
+  .brand{
+    display:none;
+  }
+  .status{
+    width:100%;
+    justify-content:space-between;
+    gap:7px;
+  }
+  .stat{
+    min-width:0;
+  }
+  .stat small{
+    font-size:.48rem;
+    letter-spacing:.07em;
+  }
+  .stat strong{
+    font-size:.7rem;
+  }
+  .nitro-wrap{
+    width:54px;
+  }
+  .progress{
+    width:60px;
+  }
+  #message{
+    top:66px;
+    max-width:calc(100vw - 24px);
+    text-align:center;
+    white-space:normal;
+    font-size:.72rem;
+  }
+  #musicFloatBtn{
+    top:66px;
+    right:10px;
+    min-height:38px;
+    padding:0 11px;
+    font-size:.64rem;
+  }
+  .sky-theme-indicator{
+    display:none;
+  }
+
+  body.game-active .mobile{
+    display:flex;
+    left:0;
+    right:0;
+    bottom:max(12px,env(safe-area-inset-bottom));
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:10px;
+  }
+  .mobile button{
+    width:58px;
+    height:54px;
+    border-radius:16px;
+    font-size:1.15rem;
+  }
+  .mobile .drive-btn{
+    width:58px;
+    height:54px;
+    font-size:.58rem;
+  }
+
+  .cockpit-layer{
+    padding:0 12px max(18px,env(safe-area-inset-bottom));
+  }
+  .cockpit-panel{
+    width:100%;
+    padding:18px 14px;
+    border-radius:20px;
+  }
+  .cockpit-panel h3{
+    font-size:clamp(1.7rem,9vw,2.6rem);
+  }
+  .cockpit-panel p{
+    font-size:.8rem;
+  }
+  .cockpit-actions{
+    grid-template-columns:1fr;
+  }
+  .cockpit-btn{
+    min-height:52px;
+  }
+
+  .rose-garden .rose-3d{
+    opacity:.38;
+  }
+}
+
+@media(max-width:390px){
+  .hero{padding:14px}
+  .moto-strip-item{
+    min-height:78px;
+    padding:8px;
+    gap:6px;
+  }
+  .moto-strip-icon{
+    width:32px;
+    height:24px;
+    flex-basis:32px;
+  }
+  .moto-strip-item strong{
+    font-size:.56rem;
+    letter-spacing:.035em;
+  }
+  .moto-strip-item small{
+    font-size:.53rem;
+  }
+  .mobile{
+    gap:6px;
+  }
+  .mobile .mobile-steer,
+  .mobile .mobile-drive{
+    gap:6px;
+  }
+  .mobile button,
+  .mobile .drive-btn{
+    width:52px;
+    height:50px;
+  }
+  .progress{
+    width:45px;
+  }
+  .nitro-wrap{
+    width:46px;
+  }
+}
+
+@media(max-width:700px) and (orientation:landscape){
+  .topbar{
+    width:calc(100vw - 12px);
+  }
+  .mobile{
+    bottom:6px;
+  }
+  .mobile button,
+  .mobile .drive-btn{
+    width:54px;
+    height:46px;
+  }
+  .cockpit-layer{
+    align-items:center;
+    padding:58px 12px 10px;
+  }
+  .cockpit-panel{
+    max-width:620px;
+    padding:14px;
+  }
+  .cockpit-panel h3{
+    font-size:1.6rem;
+  }
+  .cockpit-panel p{
+    margin-bottom:10px;
+  }
+  .cockpit-actions{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+</style>
+</head>
+<body>
+<svg class="svg-defs" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="bikePaint" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff6a4a"/><stop offset=".42" stop-color="#d92024"/><stop offset="1" stop-color="#5e090d"/></linearGradient>
+    <linearGradient id="bikeMetal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7f7f8"/><stop offset=".22" stop-color="#888e98"/><stop offset=".55" stop-color="#e9ebee"/><stop offset="1" stop-color="#4a4f58"/></linearGradient>
+    <linearGradient id="bikeDark" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#252a31"/><stop offset=".45" stop-color="#07080b"/><stop offset="1" stop-color="#171a20"/></linearGradient>
+    <radialGradient id="wheelGlow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ff5d36" stop-opacity=".36"/><stop offset="1" stop-color="#ff5d36" stop-opacity="0"/></radialGradient>
+    <filter id="softGlow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <symbol id="streetBike" viewBox="0 0 520 230">
+      <g class="bike-stage">
+        <ellipse cx="260" cy="207" rx="196" ry="16" fill="url(#wheelGlow)"/>
+        <circle cx="122" cy="169" r="56" fill="#050608" stroke="#343942" stroke-width="10"/>
+        <circle cx="122" cy="169" r="36" fill="#111419" stroke="url(#bikeMetal)" stroke-width="5"/>
+        <circle cx="399" cy="169" r="56" fill="#050608" stroke="#343942" stroke-width="10"/>
+        <circle cx="399" cy="169" r="36" fill="#111419" stroke="url(#bikeMetal)" stroke-width="5"/>
+        <g stroke="#69707b" stroke-width="4" opacity=".85">
+          <path d="M122 133v72M86 169h72M97 144l50 50M147 144l-50 50"/>
+          <path d="M399 133v72M363 169h72M374 144l50 50M424 144l-50 50"/>
+        </g>
+        <path d="M137 155 L196 111 L280 117 L335 158 L259 168 L188 164 Z" fill="#0b0d11" stroke="#474d57" stroke-width="5"/>
+        <path d="M183 139 L219 91 L315 94 L344 120 L300 136 L228 132 Z" fill="url(#bikePaint)"/>
+        <path d="M219 91 Q246 49 305 72 L329 98 L270 106 Z" fill="url(#bikePaint)"/>
+        <path d="M278 75 Q316 48 349 69 L333 86 L306 84 Z" fill="#090b0f"/>
+        <path d="M184 137 L145 149 L132 141 L190 118 Z" fill="#9fa6af"/>
+        <path d="M325 115 L372 108 L397 160" fill="none" stroke="url(#bikeMetal)" stroke-width="8" stroke-linecap="round"/>
+        <path d="M343 107 L372 80" fill="none" stroke="url(#bikeMetal)" stroke-width="7" stroke-linecap="round"/>
+        <path d="M360 78 L404 75" fill="none" stroke="#c7cbd1" stroke-width="6" stroke-linecap="round"/>
+        <path d="M394 75 L409 88" fill="none" stroke="#696f78" stroke-width="5" stroke-linecap="round"/>
+        <path d="M171 151 L135 168" fill="none" stroke="#949aa3" stroke-width="6"/>
+        <path d="M286 137 Q265 186 226 185" fill="none" stroke="#babfc7" stroke-width="10" stroke-linecap="round"/>
+        <path d="M285 141 Q318 153 333 170" fill="none" stroke="#535962" stroke-width="12" stroke-linecap="round"/>
+        <path d="M194 111 L174 94 L141 97" fill="none" stroke="#888e96" stroke-width="5"/>
+        <path d="M137 93 l-15 -11" stroke="#d8dbe0" stroke-width="5" stroke-linecap="round"/>
+        <path d="M207 97 Q234 79 260 83" fill="none" stroke="#ff9b83" stroke-width="3" opacity=".6"/>
+        <rect x="202" y="130" width="77" height="42" rx="9" fill="url(#bikeDark)" stroke="#3a4049" stroke-width="3"/>
+        <circle cx="238" cy="151" r="14" fill="#6f757f" stroke="#bfc4cb" stroke-width="3"/>
+        <path d="M171 106 L149 88" stroke="#d5d9df" stroke-width="3"/>
+        <ellipse cx="145" cy="84" rx="12" ry="8" fill="#11141a" stroke="#9097a0" stroke-width="2"/>
+        <path d="M369 96 Q387 88 401 99" fill="none" stroke="#ffdfb0" stroke-width="7" filter="url(#softGlow)"/>
+        <path d="M150 148 Q165 139 181 139" fill="none" stroke="#ff3d32" stroke-width="6" filter="url(#softGlow)"/>
+      </g>
+    </symbol>
+    <symbol id="trafficLightIcon" viewBox="0 0 90 60"><g transform="translate(26 2)"><rect x="0" y="0" width="32" height="50" rx="8" fill="#0b0d11" stroke="#3f4650"/><circle cx="16" cy="12" r="6" fill="#ff3b30"/><circle cx="16" cy="25" r="6" fill="#ffb021"/><circle cx="16" cy="38" r="6" fill="#33d17a"/><rect x="13" y="49" width="6" height="9" fill="#777e88"/></g></symbol>
+    <symbol id="gymIcon" viewBox="0 0 90 60"><g transform="translate(8 13)" stroke="url(#bikeMetal)" stroke-width="6" stroke-linecap="round"><path d="M20 17h42"/><path d="M14 9v16M8 7v20M68 9v16M74 7v20"/></g></symbol>
+    <symbol id="boltIcon" viewBox="0 0 90 60"><path d="M50 3 25 34h18l-5 23 27-35H47z" fill="url(#bikePaint)"/></symbol>
+  </defs>
+</svg>
+
+<div id="game"></div>
+<div class="night-orb one" id="orbA"></div>
+<div class="night-orb two" id="orbB"></div>
+<div class="night-orb three" id="orbC"></div>
+<div class="sky-theme-indicator" id="skyThemeLabel">Noche Carmesí</div>
+<div class="vignette"></div>
+<div class="grid"></div>
+<div class="hit" id="hit"></div>
+
+<div class="topbar">
+  <div class="brand">30 de octubre / Un juego para ti</div>
+  <div class="status">
+    <div class="stat"><small>Distancia</small><strong id="distance">0 m</strong></div>
+    <div class="stat"><small>Velocidad</small><strong id="speed">0 km/h</strong></div>
+    <div class="stat"><small>Vidas</small><strong id="lives">3</strong></div>
+    <div class="stat"><small>Turbo</small><div class="nitro-wrap"><div id="nitroBar"></div></div></div>
+    <div class="progress"><div id="progress"></div></div>
+  </div>
+</div>
+
+<div id="message">Esquiva los obstáculos y llega a la meta.</div>
+<div class="sky-glow" id="skyGlow"></div>
+<div class="sky-phrase" id="skyPhrase"></div>
+<div class="countdown" id="countdown"></div>
+<div class="sky-streak" id="streak1"></div>
+<div class="sky-streak" id="streak2"></div>
+<div class="pause-layer" id="pauseLayer">
+  <div class="pause-card">
+    <h3>Pausa</h3>
+    <p>Presiona P para continuar.</p>
+  </div>
+</div>
+
+
+<div class="landing-wrap" id="landingWrap">
+<section class="screen intro" id="intro">
+  <div class="hero">
+<div class="rose-garden" aria-hidden="true"><span class="rose-3d r1"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d r2"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d r3"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d r4"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d r5"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d r6"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span></div>
+
+    <div class="hero-moto-atmosphere" aria-hidden="true">
+      <span class="hero-moto m1"><svg viewBox="0 0 520 230"><use href="#streetBike"/></svg></span>
+      <span class="hero-moto m2"><svg viewBox="0 0 520 230"><use href="#streetBike"/></svg></span>
+      <span class="hero-moto m3"><svg viewBox="0 0 520 230"><use href="#streetBike"/></svg></span>
+      <span class="hero-moto m4"><svg viewBox="0 0 520 230"><use href="#streetBike"/></svg></span>
+      <span class="hero-moto m5"><svg viewBox="0 0 520 230"><use href="#streetBike"/></svg></span>
+      <span class="hero-moto m6"><svg viewBox="0 0 520 230"><use href="#streetBike"/></svg></span>
+      <span class="hero-moto m7"><svg viewBox="0 0 520 230"><use href="#streetBike"/></svg></span>
+      <span class="hero-moto m8"><svg viewBox="0 0 520 230"><use href="#streetBike"/></svg></span>
+    </div>
+    <div class="hero-left">
+      <div class="eyebrow">30 de octubre / para ti</div>
+      <h1>Feliz<br><span class="outline">30 de octubre, mi amor.</span></h1>
+      <p class="lead">
+        Cambié los carritos por motos porque quería hacer algo distinto, algo que se sintiera
+        más tuyo y más nuestro. Primero recorres la historia; luego manejas hasta la sorpresa.
+      </p>
+
+      <div class="badges">
+        <div class="badge">Ruta interactiva</div>
+        <div class="badge">Street bike</div>
+        <div class="badge">Motos voladoras</div>
+        <div class="badge">Turbo</div>
+        <div class="badge">Cielo dinámico</div>
+        <div class="badge">Sorpresa final</div>
+      </div>
+
+      <div class="moto-strip">
+        <div class="moto-strip-item"><span class="moto-strip-icon"><svg viewBox="0 0 520 230"><use href="#streetBike"/></svg></span><div><strong>Moto District</strong><small>Motos por toda la ruta</small></div></div>
+        <div class="moto-strip-item"><span class="moto-strip-icon"><svg viewBox="0 0 90 60"><use href="#trafficLightIcon"/></svg></span><div><strong>Semáforos</strong><small>Nuevos obstáculos</small></div></div>
+        <div class="moto-strip-item"><span class="moto-strip-icon"><svg viewBox="0 0 90 60"><use href="#gymIcon"/></svg></span><div><strong>Gym Zone</strong><small>Gimnasios a ambos lados</small></div></div>
+        <div class="moto-strip-item"><span class="moto-strip-icon"><svg viewBox="0 0 90 60"><use href="#boltIcon"/></svg></span><div><strong>Turbo Run</strong><small>Más velocidad y tráfico</small></div></div>
+      </div>
+      <div class="road-district"><span>La ciudad ahora mezcla motos, neón, gimnasios y obstáculos de tráfico.</span><strong>Ride • Gym • Love</strong></div>
+
+      <div class="landing-line"></div>
+      <div class="landing-note">
+        Desliza hacia abajo para descubrir más. Puedes explorar la carretera antes de jugar.
+      </div>
+
+      <div class="hero-bottom-note">
+        <p>
+          Hay regalos que se guardan en una caja. Este se recorre, se juega y termina
+          en una foto que significa mucho más.
+        </p>
+        <strong>Atte. Tatiana</strong>
+      </div>
+
+      <div class="love-signature">Con amor, <span>Tatiana</span></div>
+    </div>
+
+    <div class="showcase">
+      <div class="showcase-media">
+        <img src="images/2.jpg" alt="Moto especial del 30 de octubre" id="heroPoster">
+      </div>
+      <div class="image-badge">Edición 30 de octubre</div>
+
+      <div class="showcase-content">
+        <div class="eyebrow">Tu moto / tu ruta</div>
+        <h2 class="showcase-title">Una pequeña carrera hecha para ti.</h2>
+        <p class="showcase-copy">
+          Explora la carretera, mira el escenario y cuando estés listo pulsa jugar.
+          La noche irá cambiando de color mientras avanzas.
+        </p>
+
+        <div class="controls">
+          <div class="key">A / ←</div>
+          <div class="key">D / →</div>
+          <div class="key">W / ↑</div>
+          <div class="key">S / ↓</div>
+          <div class="key">SHIFT</div>
+          <div class="key">P</div>
+        </div>
+
+        <div class="control-legend">
+          <span>Girar</span>
+          <span>Acelerar</span>
+          <span>Frenar</span>
+          <span>Turbo</span>
+          <span>Pausa</span>
+        </div>
+
+        <button class="play" id="playBtn">Jugar</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="scroll-section">
+<div class="rose-garden" aria-hidden="true"><span class="rose-3d r1"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d r2"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d r3"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d r4"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d r5"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d r6"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span></div>
+  <div class="decor-bike left" aria-hidden="true"><div class="bike-floor"></div><svg viewBox="0 0 520 230"><use href="#streetBike"/></svg></div>
+  <div class="story-card">
+    <div class="eyebrow">Antes de arrancar</div>
+    <h2>Hay personas que convierten cualquier camino en uno especial.</h2>
+    <p>
+      No importa si el día fue largo, si hubo curvas o si todo salió distinto a lo esperado.
+      Hay algo en ti que hace que incluso los días normales se sientan mejor.
+    </p>
+    <div class="quote">Por eso esta ruta empieza contigo y también termina contigo.</div>
+  </div>
+</section>
+
+<section class="scroll-section alt">
+<div class="rose-garden" aria-hidden="true"><span class="rose-3d r1"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d r2"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d r3"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d r4"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d r5"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d r6"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span></div>
+  <div class="decor-bike right" aria-hidden="true"><div class="bike-floor"></div><svg viewBox="0 0 520 230"><use href="#streetBike"/></svg></div>
+  <div class="story-card">
+    <div class="eyebrow">Lo que me gusta de ti</div>
+    <h2>Tu forma de estar, de reír y de hacerme sentir acompañado.</h2>
+    <p>
+      Quería que esto no fuera solo un sencillo detalle. Quería que tuviera movimiento,
+      un poco de dificultad, un poco de juego y algo que se sintiera hecho especialmente para ti.
+    </p>
+    <div class="quote">Porque te amo por lo que eres, no por una fecha.</div>
+  </div>
+</section>
+
+<section class="preview-section" id="previewSection">
+<div class="rose-garden" aria-hidden="true"><span class="rose-3d r1"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d r2"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d r3"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d r4"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d r5"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d r6"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span></div>
+  <div class="preview-card">
+    <div class="eyebrow">Explora antes de jugar</div>
+    <h2>Mira la carretera a tu manera.</h2>
+    <p>
+      Puedes entrar en modo exploración, mover la cámara, acercarte con la rueda del mouse
+      y alejarte para ver las motos, el gimnasio, los obstáculos y todo el escenario.
+    </p>
+    <div class="preview-actions">
+      <button class="play" id="previewBtn" style="width:auto;padding:0 24px">Explorar carretera</button>
+      <button class="secondary" id="playBtn2">Jugar ahora</button>
+    </div>
+    <div class="preview-hint">Arrastra con el mouse para mirar · usa la rueda para acercarte o alejarte</div>
+  </div>
+</section>
+</div>
+<section class="screen finish" id="finish">
+  <div class="finish-card">
+    <div class="photo"><img src="images/1.jpeg" alt="Foto juntos" id="couplePhoto"><div class="photo-floral-frame" aria-hidden="true"><span class="rose-3d fr1"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d fr2"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d fr3"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d fr4"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d fr5"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d fr6"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d fr7"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span><span class="rose-3d fr8"><span class="stem"></span><span class="leaf"></span><span class="leaf r"></span><span class="bloom"><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="petal"></i><i class="core"></i></span></span></div></div>
+    <div class="copy">
+      <div class="eyebrow">Llegaste al final</div>
+      <h2>La mejor parte del camino eres tú.</h2>
+      <p>
+        Feliz 30 de octubre. Quise cambiar los carritos por motos y hacer algo distinto:
+        una pequeña ruta que terminara en lo que realmente importa.
+      </p>
+      <p>
+        Entre curvas, obstáculos y kilómetros, al final siempre quería que apareciera nuestra foto.
+      </p>
+      <p class="small">
+        Gracias por compartir el camino conmigo y por todas las rutas que todavía nos quedan.
+      </p>
+      <div class="love-signature">Feliz 30 de octubre, mi amor.<br><span>Atte. Tatiana</span></div>
+      <div class="actions">
+        <button class="play" id="againBtn" style="width:auto;padding:0 24px">Jugar otra vez</button>
+        <button class="secondary" id="closeBtn">Ver carretera</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="roadPreviewBadge">Modo exploración · arrastra para mirar · rueda para zoom · ESC para salir</div>
+
+<div class="cockpit-layer" id="cockpitLayer">
+  <div class="cockpit-panel">
+    <div class="cockpit-kicker">Antes de arrancar</div>
+    <h3>Todo listo. Tú decides cuándo empezar.</h3>
+    <p>Enciende la música si quieres y luego acelera para comenzar el recorrido.</p>
+    <div class="cockpit-actions">
+      <button class="cockpit-btn music" id="musicStartBtn">♫ Música<span class="sub">con amor esta canción</span></button>
+      <button class="cockpit-btn accelerate" id="accelerateBtn">Acelerar<span class="sub">Comenzar el camino</span></button>
+    </div>
+  </div>
+</div>
+<div class="cockpit-speedline" id="cockpitSpeedline"></div>
+<button id="musicFloatBtn" type="button">Pausar música</button>
+
+<div class="mobile" aria-label="Controles móviles">
+  <div class="mobile-steer">
+    <button id="leftBtn" type="button" aria-label="Girar a la izquierda">←</button>
+    <button id="rightBtn" type="button" aria-label="Girar a la derecha">→</button>
+  </div>
+  <div class="mobile-drive">
+    <button id="brakeBtn" class="drive-btn brake" type="button" aria-label="Frenar">Freno</button>
+    <button id="gasBtn" class="drive-btn" type="button" aria-label="Acelerar">Gas</button>
+    <button id="turboBtn" class="drive-btn turbo" type="button" aria-label="Turbo">Turbo</button>
+  </div>
+</div>
+
+<script type="module">
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js";
+
+const mount=document.getElementById("game");
+const intro=document.getElementById("intro");
+const finish=document.getElementById("finish");
+const playBtn=document.getElementById("playBtn");
+const againBtn=document.getElementById("againBtn");
+const closeBtn=document.getElementById("closeBtn");
+const distanceEl=document.getElementById("distance");
+const speedEl=document.getElementById("speed");
+const livesEl=document.getElementById("lives");
+const progressEl=document.getElementById("progress");
+const messageEl=document.getElementById("message");
+const hitEl=document.getElementById("hit");
+const countdownEl=document.getElementById("countdown");
+const skyPhrase=document.getElementById("skyPhrase");
+const skyGlow=document.getElementById("skyGlow");
+const leftBtn=document.getElementById("leftBtn");
+const rightBtn=document.getElementById("rightBtn");
+const brakeBtn=document.getElementById("brakeBtn");
+const gasBtn=document.getElementById("gasBtn");
+const turboBtn=document.getElementById("turboBtn");
+const playBtn2=document.getElementById("playBtn2");
+const previewBtn=document.getElementById("previewBtn");
+const landingWrap=document.getElementById("landingWrap");
+const roadPreviewBadge=document.getElementById("roadPreviewBadge");
+const heroPoster=document.getElementById("heroPoster");
+const skyThemeLabel=document.getElementById("skyThemeLabel");
+const orbA=document.getElementById("orbA");
+const orbB=document.getElementById("orbB");
+const orbC=document.getElementById("orbC");
+const nitroBar=document.getElementById("nitroBar");
+const pauseLayer=document.getElementById("pauseLayer");
+const streak1=document.getElementById("streak1");
+const streak2=document.getElementById("streak2");
+const cockpitLayer=document.getElementById("cockpitLayer");
+const cockpitSpeedline=document.getElementById("cockpitSpeedline");
+const musicStartBtn=document.getElementById("musicStartBtn");
+const accelerateBtn=document.getElementById("accelerateBtn");
+const musicFloatBtn=document.getElementById("musicFloatBtn");
+
+const rideMusic=new Audio("images/music.mp3");
+rideMusic.loop=true;
+rideMusic.preload="auto";
+rideMusic.volume=.68;
+let musicStarted=false;
+let preRide=false;
+let cockpitReady=false;
+let cockpitTimer=null;
+
+
+heroPoster?.addEventListener("error",()=>{
+  heroPoster.style.display="none";
+});
+
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x050507);
+scene.fog=new THREE.FogExp2(0x06070a,.04);
+
+const camera=new THREE.PerspectiveCamera(58,innerWidth/innerHeight,.1,180);
+camera.position.set(0,4.3,8.7);
+
+const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:"high-performance"});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(innerWidth,innerHeight);
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.12;
+mount.appendChild(renderer.domElement);
+
+// ---------- LIGHT ----------
+scene.add(new THREE.HemisphereLight(0x71809a,0x050506,1.55));
+
+const key=new THREE.DirectionalLight(0xc8ddff,2.6);
+key.position.set(-4,9,7);
+scene.add(key);
+
+const red=new THREE.PointLight(0xff382b,38,22,2);
+red.position.set(-6,2,4);
+scene.add(red);
+
+const amber=new THREE.PointLight(0xff8c26,24,18,2);
+amber.position.set(6,2,-4);
+scene.add(amber);
+
+
+// ---------- CIELO DINÁMICO ----------
+const skyThemes=[
+  {
+    name:"Noche Carmesí",
+    bg:new THREE.Color(0x070509),
+    fog:new THREE.Color(0x0a0507),
+    hemiSky:0x7f6572,
+    red:0xff3a2a,
+    amber:0xff8a2a,
+    orbA:"#ff402e",
+    orbB:"#8d2540",
+    orbC:"#ff8a2a"
+  },
+  {
+    name:"Noche Violeta",
+    bg:new THREE.Color(0x080613),
+    fog:new THREE.Color(0x090713),
+    hemiSky:0x766a9d,
+    red:0xb14cff,
+    amber:0x6f8cff,
+    orbA:"#9b5cff",
+    orbB:"#4b4dff",
+    orbC:"#ff5da2"
+  },
+  {
+    name:"Noche Azul",
+    bg:new THREE.Color(0x040914),
+    fog:new THREE.Color(0x050b15),
+    hemiSky:0x5f7f9f,
+    red:0x31bfff,
+    amber:0x6ce7ff,
+    orbA:"#28b9ff",
+    orbB:"#3a6cff",
+    orbC:"#6ee6ff"
+  },
+  {
+    name:"Noche Ámbar",
+    bg:new THREE.Color(0x0d0804),
+    fog:new THREE.Color(0x100904),
+    hemiSky:0x8e795f,
+    red:0xff6c2c,
+    amber:0xffc45a,
+    orbA:"#ff7b32",
+    orbB:"#b5471e",
+    orbC:"#ffd36b"
+  }
+];
+
+let currentSkyTheme=0;
+let skyBlend=0;
+
+function applySkyTheme(index,instant=false){
+  currentSkyTheme=index%skyThemes.length;
+  const theme=skyThemes[currentSkyTheme];
+  skyThemeLabel.textContent=theme.name;
+
+  orbA.style.background=theme.orbA;
+  orbB.style.background=theme.orbB;
+  orbC.style.background=theme.orbC;
+
+  if(instant){
+    scene.background.copy(theme.bg);
+    scene.fog.color.copy(theme.fog);
+    red.color.setHex(theme.red);
+    amber.color.setHex(theme.amber);
+  }
+}
+
+applySkyTheme(0,true);
+
+// ---------- MATERIALS ----------
+const asphaltMat=new THREE.MeshStandardMaterial({color:0x111217,roughness:.96,metalness:.04});
+const grassMat=new THREE.MeshStandardMaterial({color:0x0a0d0b,roughness:1});
+const whiteMat=new THREE.MeshBasicMaterial({color:0xe8e9ed});
+const edgeMat=new THREE.MeshBasicMaterial({color:0x7d1715});
+const metalMat=new THREE.MeshStandardMaterial({color:0x9fa4ab,metalness:1,roughness:.22});
+const darkMat=new THREE.MeshStandardMaterial({color:0x08090c,metalness:.56,roughness:.46});
+
+// ---------- ROAD ----------
+const roadWidth=8.2;
+const segLen=20;
+const segCount=10;
+const roadSegments=[];
+
+function makeRoadSegment(z){
+  const g=new THREE.Group();
+
+  const road=new THREE.Mesh(new THREE.PlaneGeometry(roadWidth,segLen),asphaltMat);
+  road.rotation.x=-Math.PI/2;
+  g.add(road);
+
+  for(const x of [-roadWidth/2-5.1,roadWidth/2+5.1]){
+    const side=new THREE.Mesh(new THREE.PlaneGeometry(10,segLen),grassMat);
+    side.rotation.x=-Math.PI/2;
+    side.position.set(x,-.02,0);
+    g.add(side);
+  }
+
+  for(const x of [-roadWidth/2,roadWidth/2]){
+    const edge=new THREE.Mesh(new THREE.BoxGeometry(.07,.018,segLen),edgeMat);
+    edge.position.set(x,.015,0);
+    g.add(edge);
+  }
+
+  for(const laneX of [-1.35,1.35]){
+    for(let i=-2;i<=2;i++){
+      const dash=new THREE.Mesh(new THREE.BoxGeometry(.055,.022,2.15),whiteMat);
+      dash.position.set(laneX,.025,i*4);
+      g.add(dash);
+    }
+  }
+
+  g.position.z=z;
+  return g;
+}
+for(let i=0;i<segCount;i++){
+  const s=makeRoadSegment(-i*segLen);
+  roadSegments.push(s);
+  scene.add(s);
+}
+
+
+// ---------- JARDINES DE ROSAS 3D ----------
+const roadsideRoses=[];
+
+function createRose3D(scale=1){
+  const rose=new THREE.Group();
+
+  const stemMat=new THREE.MeshStandardMaterial({color:0x24522d,roughness:.78});
+  const leafMat=new THREE.MeshStandardMaterial({color:0x2f7a3d,roughness:.72,side:THREE.DoubleSide});
+  const petalOuter=new THREE.MeshStandardMaterial({color:0xb90919,roughness:.48,metalness:.03,side:THREE.DoubleSide});
+  const petalInner=new THREE.MeshStandardMaterial({color:0xf21f32,roughness:.42,metalness:.03,side:THREE.DoubleSide});
+  const coreMat=new THREE.MeshStandardMaterial({color:0x72050d,roughness:.55});
+
+  const stem=new THREE.Mesh(new THREE.CylinderGeometry(.025,.035,.72,8),stemMat);
+  stem.position.y=.36;
+  rose.add(stem);
+
+  const leafGeo=new THREE.SphereGeometry(.11,10,7,0,Math.PI*2,0,Math.PI/2);
+  const leaf1=new THREE.Mesh(leafGeo,leafMat);
+  leaf1.scale.set(1.45,.18,.72);
+  leaf1.position.set(.09,.31,0);
+  leaf1.rotation.z=-.48;
+  rose.add(leaf1);
+  const leaf2=leaf1.clone();
+  leaf2.position.set(-.09,.45,.02);
+  leaf2.rotation.z=.55;
+  leaf2.rotation.y=Math.PI;
+  rose.add(leaf2);
+
+  const bloom=new THREE.Group();
+  bloom.position.y=.82;
+
+  for(let ring=0;ring<3;ring++){
+    const count=ring===0?5:ring===1?7:9;
+    const radius=.035+ring*.045;
+    const size=.18-ring*.024;
+    for(let i=0;i<count;i++){
+      const a=i/count*Math.PI*2 + ring*.36;
+      const petal=new THREE.Mesh(new THREE.SphereGeometry(size,12,8),ring===2?petalOuter:petalInner);
+      petal.scale.set(.72,1.05,.28);
+      petal.position.set(Math.cos(a)*radius,(ring===0?.02:-ring*.012),Math.sin(a)*radius);
+      petal.rotation.x=Math.PI/2 + (ring*.16);
+      petal.rotation.y=-a;
+      petal.rotation.z=a*.22;
+      bloom.add(petal);
+    }
+  }
+  const core=new THREE.Mesh(new THREE.SphereGeometry(.07,12,8),coreMat);
+  core.position.y=.04;
+  bloom.add(core);
+  rose.add(bloom);
+
+  rose.scale.setScalar(scale);
+  rose.userData.bloom=bloom;
+  return rose;
+}
+
+for(let i=0;i<34;i++){
+  const side=i%2===0?-1:1;
+  const cluster=new THREE.Group();
+  const baseZ=-10-i*7.6;
+  const flowerCount=2+(i%3);
+  for(let j=0;j<flowerCount;j++){
+    const r=createRose3D(.72+(j%2)*.18);
+    r.position.set((j-flowerCount/2)*.34+(Math.random()-.5)*.12,0,(Math.random()-.5)*.55);
+    r.rotation.y=(Math.random()-.5)*.7;
+    cluster.add(r);
+  }
+  cluster.position.set(side*(roadWidth/2+1.05+(i%4)*.36),0,baseZ);
+  cluster.userData.baseZ=baseZ;
+  cluster.userData.phase=i*.63;
+  roadsideRoses.push(cluster);
+  scene.add(cluster);
+}
+
+// ---------- PULSAR-INSPIRED BIKE ----------
+function createPulsarLikeBike(color=0xd81e22){
+  const g=new THREE.Group();
+
+  const paint=new THREE.MeshStandardMaterial({color,metalness:.72,roughness:.22});
+  const paintDark=new THREE.MeshStandardMaterial({color:0x161a20,metalness:.68,roughness:.26});
+  const black=new THREE.MeshStandardMaterial({color:0x050608,metalness:.44,roughness:.5});
+  const rubber=new THREE.MeshStandardMaterial({color:0x010101,roughness:.88,metalness:.04});
+  const silver=new THREE.MeshStandardMaterial({color:0xb8bcc2,metalness:1,roughness:.18});
+
+  const wheelGeo=new THREE.TorusGeometry(.5,.12,18,38);
+
+  function wheel(z){
+    const w=new THREE.Group();
+    const tire=new THREE.Mesh(wheelGeo,rubber);
+    tire.rotation.y=Math.PI/2;
+    w.add(tire);
+
+    const rim=new THREE.Mesh(new THREE.TorusGeometry(.32,.028,10,26),silver);
+    rim.rotation.y=Math.PI/2;
+    w.add(rim);
+
+    const disc=new THREE.Mesh(new THREE.CylinderGeometry(.29,.29,.026,30),silver);
+    disc.rotation.z=Math.PI/2;
+    w.add(disc);
+
+    for(let i=0;i<6;i++){
+      const spoke=new THREE.Mesh(new THREE.BoxGeometry(.035,.035,.29),silver);
+      spoke.rotation.y=i*Math.PI/3;
+      w.add(spoke);
+    }
+
+    w.position.z=z;
+    return w;
+  }
+
+  const rear=wheel(.8);
+  const front=wheel(-1.02);
+  g.add(rear,front);
+
+  // engine block
+  const engine=new THREE.Mesh(new THREE.BoxGeometry(.55,.5,.58),black);
+  engine.position.set(0,.36,-.02);
+  g.add(engine);
+
+  const engineRound=new THREE.Mesh(new THREE.CylinderGeometry(.23,.23,.58,24),silver);
+  engineRound.rotation.z=Math.PI/2;
+  engineRound.position.set(0,.36,-.02);
+  g.add(engineRound);
+
+  // muscular tank
+  const tank=new THREE.Mesh(new THREE.SphereGeometry(.46,28,18),paint);
+  tank.scale.set(.82,.62,1.18);
+  tank.position.set(0,.76,-.20);
+  g.add(tank);
+
+  // tank side shrouds
+  for(const x of [-.34,.34]){
+    const shroud=new THREE.Mesh(new THREE.BoxGeometry(.12,.28,.52),paintDark);
+    shroud.position.set(x,.68,-.30);
+    shroud.rotation.z=x<0?.18:-.18;
+    g.add(shroud);
+  }
+
+  // split seat
+  const riderSeat=new THREE.Mesh(new THREE.BoxGeometry(.46,.12,.6),black);
+  riderSeat.position.set(0,.67,.42);
+  riderSeat.rotation.x=-.03;
+  g.add(riderSeat);
+
+  const pillion=new THREE.Mesh(new THREE.BoxGeometry(.38,.12,.42),black);
+  pillion.position.set(0,.77,.88);
+  pillion.rotation.x=.1;
+  g.add(pillion);
+
+  // raised tail
+  const tail=new THREE.Mesh(new THREE.BoxGeometry(.38,.12,.5),paint);
+  tail.position.set(0,.74,.86);
+  tail.rotation.x=.16;
+  g.add(tail);
+
+  // front forks
+  for(const x of [-.115,.115]){
+    const fork=new THREE.Mesh(new THREE.CylinderGeometry(.028,.028,.82,10),silver);
+    fork.position.set(x,.4,-.85);
+    fork.rotation.x=-.22;
+    g.add(fork);
+  }
+
+  // front mudguard
+  const mud=new THREE.Mesh(new THREE.BoxGeometry(.4,.09,.5),paint);
+  mud.position.set(0,.52,-1.02);
+  mud.rotation.x=-.12;
+  g.add(mud);
+
+  // compact headlamp housing
+  const headHousing=new THREE.Mesh(new THREE.BoxGeometry(.45,.38,.24),paintDark);
+  headHousing.position.set(0,.88,-.92);
+  headHousing.rotation.x=-.1;
+  g.add(headHousing);
+
+  const headMat=new THREE.MeshStandardMaterial({
+    color:0xf8f3d9,emissive:0xffd27a,emissiveIntensity:6
+  });
+  const head=new THREE.Mesh(new THREE.BoxGeometry(.28,.18,.035),headMat);
+  head.position.set(0,.88,-1.05);
+  g.add(head);
+
+  // handlebar + mirrors
+  const handle=new THREE.Mesh(new THREE.BoxGeometry(.74,.04,.04),silver);
+  handle.position.set(0,1.02,-.75);
+  g.add(handle);
+
+  for(const x of [-.38,.38]){
+    const stem=new THREE.Mesh(new THREE.CylinderGeometry(.012,.012,.18,8),silver);
+    stem.position.set(x,.1+1.02,-.74);
+    stem.rotation.z=x<0?.55:-.55;
+    g.add(stem);
+
+    const mirror=new THREE.Mesh(new THREE.SphereGeometry(.08,14,8),black);
+    mirror.scale.set(1.25,.7,.35);
+    mirror.position.set(x*1.18,1.15,-.74);
+    g.add(mirror);
+  }
+
+  // exhaust
+  const exhaust=new THREE.Mesh(new THREE.CylinderGeometry(.07,.1,.72,14),silver);
+  exhaust.rotation.x=Math.PI/2;
+  exhaust.position.set(.37,.22,.62);
+  g.add(exhaust);
+
+  // tail light
+  const tailMat=new THREE.MeshStandardMaterial({
+    color:0xff2c22,emissive:0xff2318,emissiveIntensity:6
+  });
+  const tailLight=new THREE.Mesh(new THREE.BoxGeometry(.2,.06,.035),tailMat);
+  tailLight.position.set(0,.78,1.11);
+  g.add(tailLight);
+
+  // number plate bracket
+  const plate=new THREE.Mesh(new THREE.BoxGeometry(.28,.12,.025),black);
+  plate.position.set(0,.6,1.15);
+  plate.rotation.x=.3;
+  g.add(plate);
+
+  // turbo exhaust flame: hidden by default, animated while SHIFT is pressed
+  const turboFlame=new THREE.Group();
+  turboFlame.position.set(.37,.22,1.02);
+
+  const flameOuter=new THREE.Mesh(
+    new THREE.ConeGeometry(.105,.72,14),
+    new THREE.MeshBasicMaterial({color:0xff5a16,transparent:true,opacity:.88,blending:THREE.AdditiveBlending,depthWrite:false})
+  );
+  flameOuter.rotation.x=Math.PI/2;
+  flameOuter.position.z=.28;
+  turboFlame.add(flameOuter);
+
+  const flameInner=new THREE.Mesh(
+    new THREE.ConeGeometry(.055,.48,12),
+    new THREE.MeshBasicMaterial({color:0xfff0a0,transparent:true,opacity:.96,blending:THREE.AdditiveBlending,depthWrite:false})
+  );
+  flameInner.rotation.x=Math.PI/2;
+  flameInner.position.z=.18;
+  turboFlame.add(flameInner);
+
+  const flameCore=new THREE.Mesh(
+    new THREE.ConeGeometry(.035,.30,10),
+    new THREE.MeshBasicMaterial({color:0x8fe9ff,transparent:true,opacity:.95,blending:THREE.AdditiveBlending,depthWrite:false})
+  );
+  flameCore.rotation.x=Math.PI/2;
+  flameCore.position.z=.10;
+  turboFlame.add(flameCore);
+
+  const flameLight=new THREE.PointLight(0xff681f,0,3.4,2);
+  flameLight.position.set(0,0,.34);
+  turboFlame.add(flameLight);
+  turboFlame.visible=false;
+  g.add(turboFlame);
+
+  g.userData.rear=rear;
+  g.userData.front=front;
+  g.userData.turboFlame=turboFlame;
+  g.userData.flameOuter=flameOuter;
+  g.userData.flameInner=flameInner;
+  g.userData.flameCore=flameCore;
+  g.userData.flameLight=flameLight;
+  return g;
+}
+
+// player
+const bike=createPulsarLikeBike(0xd81f22);
+bike.scale.setScalar(1.15);
+bike.position.set(0,.53,3.2);
+scene.add(bike);
+
+// subtle shadow
+const shadow=new THREE.Mesh(
+  new THREE.CircleGeometry(.72,28),
+  new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:.44,depthWrite:false})
+);
+shadow.rotation.x=-Math.PI/2;
+shadow.scale.set(1,.38,1);
+shadow.position.set(0,.025,3.32);
+scene.add(shadow);
+
+// ---------- MORE BIKES AROUND ----------
+const ambientBikes=[];
+const ambientData=[
+  [-5.5,-8,0x252a33,.66,.12],[5.3,-15,0xd5272f,.60,-.14],
+  [-5.6,-23,0xb71e25,.62,.18],[5.5,-31,0x303844,.58,-.16],
+  [-5.4,-39,0xe06622,.60,.12],[5.6,-47,0x26292f,.56,-.12],
+  [-5.5,-55,0xc71d28,.58,.14],[5.4,-63,0x1e242c,.54,-.12],
+  [-5.6,-71,0xdd6a25,.58,.13],[5.5,-79,0x42526a,.54,-.15],
+  [-5.4,-87,0xd81f22,.61,.12],[5.6,-95,0x20242c,.56,-.10],
+  [-5.5,-103,0xf07828,.55,.16],[5.4,-111,0xb91e26,.58,-.13],
+  [-5.6,-119,0x2f3c50,.54,.10],[5.5,-127,0xd31f2c,.60,-.16],
+  [-5.4,-135,0x242a31,.56,.12],[5.6,-143,0xe16e27,.55,-.12],
+  [-5.5,-151,0x46546a,.56,.13],[5.4,-159,0xc9202a,.59,-.14],
+  [-5.6,-167,0xe87928,.55,.11],[5.5,-175,0x202a36,.56,-.13],
+  [-5.4,-183,0xc71d28,.58,.14],[5.6,-191,0x303844,.55,-.14],
+  [-5.5,-199,0xf07828,.56,.13],[5.4,-207,0xb91e26,.59,-.15]
+];
+
+for(const [x,z,color,scale,rot] of ambientData){
+  const b=createPulsarLikeBike(color);
+  b.scale.setScalar(scale);
+  b.position.set(x,.42,z);
+  b.rotation.y=rot;
+  ambientBikes.push({bike:b,baseZ:z});
+  scene.add(b);
+}
+
+// roadside poles
+const poles=[];
+function pole(x,z){
+  const g=new THREE.Group();
+  const p=new THREE.Mesh(new THREE.CylinderGeometry(.04,.05,3.1,10),metalMat);
+  p.position.y=1.55;g.add(p);
+
+  const arm=new THREE.Mesh(new THREE.BoxGeometry(.58,.04,.04),metalMat);
+  arm.position.set(x<0?.25:-.25,3.0,0);g.add(arm);
+
+  const bulb=new THREE.Mesh(
+    new THREE.SphereGeometry(.075,12,8),
+    new THREE.MeshStandardMaterial({color:0xffe6b5,emissive:0xffc66f,emissiveIntensity:5})
+  );
+  bulb.position.set(x<0?.5:-.5,2.97,0);g.add(bulb);
+  g.position.set(x,0,z);
+  return g;
+}
+for(let z=-8;z>-62;z-=14){
+  const a=pole(-5.05,z), b=pole(5.05,z-8);
+  poles.push({obj:a,baseZ:z},{obj:b,baseZ:z-8});
+  scene.add(a,b);
+}
+
+
+// ---------- GIMNASIO Y DECORACIÓN ----------
+function createGym(){
+  const g=new THREE.Group();
+
+  const buildingMat=new THREE.MeshStandardMaterial({color:0x20242b,roughness:.82,metalness:.10});
+  const trimMat=new THREE.MeshStandardMaterial({color:0x7b8088,roughness:.45,metalness:.65});
+  const glassMat=new THREE.MeshStandardMaterial({color:0x18303a,roughness:.08,metalness:.28,transparent:true,opacity:.62});
+  const warmGlassMat=new THREE.MeshStandardMaterial({color:0x2d3f49,roughness:.08,metalness:.18,transparent:true,opacity:.36,emissive:0xffb15a,emissiveIntensity:.32});
+  const neonMat=new THREE.MeshStandardMaterial({color:0x2f3136,emissive:0xff5d38,emissiveIntensity:2.8,metalness:.35,roughness:.35});
+  const concreteMat=new THREE.MeshStandardMaterial({color:0x5f636a,roughness:.96,metalness:.04});
+
+  const slab=new THREE.Mesh(new THREE.BoxGeometry(8.6,.18,6.8),concreteMat);
+  slab.position.y=.09;
+  g.add(slab);
+
+  const body=new THREE.Mesh(new THREE.BoxGeometry(7.9,4.15,5.5),buildingMat);
+  body.position.set(0,2.08,0);
+  g.add(body);
+
+  const parapet=new THREE.Mesh(new THREE.BoxGeometry(8.3,.28,5.9),trimMat);
+  parapet.position.set(0,4.28,0);
+  g.add(parapet);
+
+  const awning=new THREE.Mesh(new THREE.BoxGeometry(7.2,.18,.9),new THREE.MeshStandardMaterial({color:0x111317,roughness:.5,metalness:.35}));
+  awning.position.set(0,3.12,2.82);
+  g.add(awning);
+
+  const sign=new THREE.Mesh(new THREE.BoxGeometry(4.4,.8,.18),neonMat);
+  sign.position.set(0,3.58,2.86);
+  g.add(sign);
+
+  const signFrame=new THREE.Mesh(new THREE.BoxGeometry(4.56,.96,.08),trimMat);
+  signFrame.position.set(0,3.58,2.76);
+  g.add(signFrame);
+
+  for(const x of [-3.02,3.02]){
+    const column=new THREE.Mesh(new THREE.BoxGeometry(.28,4.1,.34),trimMat);
+    column.position.set(x,2.05,2.58);
+    g.add(column);
+  }
+
+  const doorFrame=new THREE.Mesh(new THREE.BoxGeometry(1.34,2.68,.12),trimMat);
+  doorFrame.position.set(0,1.46,2.79);
+  g.add(doorFrame);
+
+  const door=new THREE.Mesh(new THREE.BoxGeometry(1.06,2.38,.05),glassMat);
+  door.position.set(0,1.44,2.86);
+  g.add(door);
+
+  for(const x of [-2.15,2.15]){
+    const window=new THREE.Mesh(new THREE.BoxGeometry(2.25,2.34,.06),warmGlassMat);
+    window.position.set(x,1.56,2.86);
+    g.add(window);
+  }
+
+  for(const x of [-2.15,2.15]){
+    const topBand=new THREE.Mesh(new THREE.BoxGeometry(2.25,.22,.08),trimMat);
+    topBand.position.set(x,2.74,2.79);
+    g.add(topBand);
+    const bottomBand=new THREE.Mesh(new THREE.BoxGeometry(2.25,.22,.08),trimMat);
+    bottomBand.position.set(x,.39,2.79);
+    g.add(bottomBand);
+  }
+
+  for(const x of [-2.15,2.15]){
+    const treadmillBase=new THREE.Mesh(new THREE.BoxGeometry(1.1,.12,.48),darkMat);
+    treadmillBase.position.set(x,.58,1.9);
+    g.add(treadmillBase);
+    const treadmillHandle=new THREE.Mesh(new THREE.BoxGeometry(.82,.7,.06),metalMat);
+    treadmillHandle.position.set(x,.96,1.68);
+    treadmillHandle.rotation.x=.2;
+    g.add(treadmillHandle);
+  }
+
+  const rack=new THREE.Mesh(new THREE.BoxGeometry(1.85,.12,.56),metalMat);
+  rack.position.set(-2.55,.58,2.05);
+  g.add(rack);
+  for(const x of [-3.05,-2.55,-2.05]){
+    const dumbbellBar=new THREE.Mesh(new THREE.CylinderGeometry(.045,.045,.82,12),metalMat);
+    dumbbellBar.rotation.z=Math.PI/2;
+    dumbbellBar.position.set(x,.84,2.05);
+    g.add(dumbbellBar);
+    for(const dx of [-.28,.28]){
+      const plate=new THREE.Mesh(new THREE.CylinderGeometry(.17,.17,.12,16),darkMat);
+      plate.rotation.z=Math.PI/2;
+      plate.position.set(x+dx,.84,2.05);
+      g.add(plate);
+    }
+  }
+
+  const planterMat=new THREE.MeshStandardMaterial({color:0x1c221f,roughness:.9});
+  const leafMat=new THREE.MeshStandardMaterial({color:0x2f7d45,roughness:.85});
+  for(const x of [-3.45,3.45]){
+    const planter=new THREE.Mesh(new THREE.BoxGeometry(.56,.42,.56),planterMat);
+    planter.position.set(x,.21,2.38);
+    g.add(planter);
+    const leaf=new THREE.Mesh(new THREE.ConeGeometry(.24,.72,10),leafMat);
+    leaf.position.set(x,.73,2.38);
+    g.add(leaf);
+  }
+
+  const sideVolume=new THREE.Mesh(new THREE.BoxGeometry(1.55,3.2,3.0),new THREE.MeshStandardMaterial({color:0x191c22,roughness:.88,metalness:.08}));
+  sideVolume.position.set(-3.55,1.64,-.75);
+  g.add(sideVolume);
+
+  g.userData.radius=2.2;
+  return g;
+}
+
+const gyms=[];
+[
+  {x:7.6,z:-18,rot:-.10,scale:1.00},
+  {x:-7.8,z:-38,rot:.10,scale:.92},
+  {x:7.7,z:-59,rot:-.08,scale:1.06},
+  {x:-7.9,z:-81,rot:.09,scale:.96},
+  {x:7.6,z:-103,rot:-.08,scale:1.02},
+  {x:-7.8,z:-125,rot:.08,scale:.92},
+  {x:7.8,z:-147,rot:-.09,scale:1.05},
+  {x:-7.7,z:-169,rot:.08,scale:.95},
+  {x:7.6,z:-191,rot:-.08,scale:1.00},
+  {x:-7.9,z:-211,rot:.09,scale:.94}
+].forEach(cfg=>{
+  const obj=createGym();
+  obj.position.set(cfg.x,0,cfg.z);
+  obj.rotation.y=cfg.rot;
+  obj.scale.setScalar(cfg.scale);
+  obj.userData.baseZ=cfg.z;
+  gyms.push(obj);
+  scene.add(obj);
+});
+
+function createGymRoadProp(){
+  const g=new THREE.Group();
+  const rack=new THREE.Mesh(new THREE.BoxGeometry(1.35,.08,.45),metalMat);
+  rack.position.y=.48; g.add(rack);
+  for(const x of [-.52,0,.52]){
+    const bar=new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,.75,10),metalMat);
+    bar.rotation.z=Math.PI/2; bar.position.set(x,.75,0); g.add(bar);
+    for(const dx of [-.31,.31]){
+      const plate=new THREE.Mesh(new THREE.CylinderGeometry(.15,.15,.11,14),darkMat);
+      plate.rotation.z=Math.PI/2; plate.position.set(x+dx,.75,0); g.add(plate);
+    }
+  }
+  const post=new THREE.Mesh(new THREE.BoxGeometry(.08,1.5,.08),metalMat);
+  post.position.set(-.68,.75,0); g.add(post);
+  const post2=post.clone(); post2.position.x=.68; g.add(post2);
+  return g;
+}
+
+const gymRoadProps=[];
+[
+  [-6.0,-10],[6.0,-27],[-6.1,-47],[6.0,-68],[-6.0,-90],[6.1,-111],
+  [-6.0,-133],[6.0,-154],[-6.1,-176],[6.0,-198],[-6.0,-216]
+].forEach(([x,z],i)=>{
+  const prop=createGymRoadProp();
+  prop.position.set(x,0,z);
+  prop.rotation.y=x<0?.22:-.22;
+  prop.userData.baseZ=z;
+  gymRoadProps.push(prop);
+  scene.add(prop);
+});
+
+// ---------- OBJETOS QUE CAEN ----------
+function createDumbbell(){
+  const g=new THREE.Group();
+  const bar=new THREE.Mesh(new THREE.CylinderGeometry(.045,.045,.9,10),metalMat);
+  bar.rotation.z=Math.PI/2;
+  g.add(bar);
+  for(const x of [-.4,.4]){
+    const p1=new THREE.Mesh(new THREE.CylinderGeometry(.19,.19,.14,14),darkMat);
+    p1.rotation.z=Math.PI/2;
+    p1.position.x=x;
+    g.add(p1);
+  }
+  g.userData.radius=.58;
+  return g;
+}
+
+function createFallingBox(){
+  const m=new THREE.Mesh(
+    new THREE.BoxGeometry(.7,.7,.7),
+    new THREE.MeshStandardMaterial({color:0x82502d,roughness:.85})
+  );
+  m.userData.radius=.55;
+  return m;
+}
+
+const fallingObjects=[];
+[
+  {z:-36,x:0,type:"dumbbell",delay:.1},
+  {z:-52,x:-2.2,type:"box",delay:.28},
+  {z:-67,x:2.1,type:"dumbbell",delay:.46},
+  {z:-88,x:0,type:"box",delay:.64},
+  {z:-108,x:-2.1,type:"dumbbell",delay:.82},
+  {z:-128,x:2.15,type:"box",delay:.94}
+].forEach(cfg=>{
+  const o=cfg.type==="dumbbell"?createDumbbell():createFallingBox();
+  o.position.set(cfg.x,7,cfg.z);
+  o.userData.baseZ=cfg.z;
+  o.userData.delay=cfg.delay;
+  o.userData.hit=false;
+  o.userData.active=false;
+  o.visible=false;
+  fallingObjects.push(o);
+  scene.add(o);
+});
+
+
+// ---------- SEMÁFOROS / OBSTÁCULOS URBANOS ----------
+function trafficLight(){
+  const g=new THREE.Group();
+
+  const concreteBase=new THREE.Mesh(new THREE.BoxGeometry(1.48,.24,1.12),new THREE.MeshStandardMaterial({color:0x5a5e64,roughness:.95,metalness:.02}));
+  concreteBase.position.y=.12; g.add(concreteBase);
+
+  const basePlate=new THREE.Mesh(new THREE.CylinderGeometry(.24,.28,.08,18),metalMat);
+  basePlate.position.set(0,.28,0); g.add(basePlate);
+
+  const mast=new THREE.Mesh(new THREE.CylinderGeometry(.11,.13,4.9,18),new THREE.MeshStandardMaterial({color:0x7e848d,roughness:.38,metalness:.78}));
+  mast.position.set(0,2.72,0); g.add(mast);
+
+  const arm=new THREE.Mesh(new THREE.BoxGeometry(2.9,.13,.13),new THREE.MeshStandardMaterial({color:0x7e848d,roughness:.38,metalness:.78}));
+  arm.position.set(.92,5.05,0); g.add(arm);
+
+  const support=new THREE.Mesh(new THREE.CylinderGeometry(.045,.045,1.28,10),metalMat);
+  support.position.set(.48,4.56,0);
+  support.rotation.z=-.64;
+  g.add(support);
+
+  const housing=new THREE.Mesh(new THREE.BoxGeometry(.86,1.92,.58),new THREE.MeshStandardMaterial({color:0x101216,metalness:.42,roughness:.42}));
+  housing.position.set(2.02,4.18,0); g.add(housing);
+
+  const visorMat=new THREE.MeshStandardMaterial({color:0x0a0c10,metalness:.35,roughness:.45});
+  for(const y of [4.73,4.18,3.63]){
+    const visor=new THREE.Mesh(new THREE.CylinderGeometry(.18,.24,.16,18,1,true,Math.PI,Math.PI),visorMat);
+    visor.rotation.z=Math.PI/2;
+    visor.position.set(2.36,y,.01);
+    g.add(visor);
+  }
+
+  const lampData=[
+    {y:4.73,color:0xff3a2f,emissive:0xff2b1f,intensity:7.8},
+    {y:4.18,color:0xffc13d,emissive:0xff9600,intensity:3.3},
+    {y:3.63,color:0x31e677,emissive:0x14bc53,intensity:2.6}
+  ];
+  lampData.forEach(l=>{
+    const lens=new THREE.Mesh(
+      new THREE.CylinderGeometry(.17,.17,.08,22),
+      new THREE.MeshStandardMaterial({color:l.color,emissive:l.emissive,emissiveIntensity:l.intensity,metalness:.18,roughness:.28})
+    );
+    lens.rotation.x=Math.PI/2;
+    lens.position.set(2.29,l.y,.24);
+    g.add(lens);
+  });
+
+  const signalBack=new THREE.Mesh(new THREE.BoxGeometry(.88,1.95,.06),new THREE.MeshStandardMaterial({color:0x2f343b,roughness:.75,metalness:.18}));
+  signalBack.position.set(1.64,4.18,0); g.add(signalBack);
+
+  g.userData.radius=1.02;
+  return g;
+}
+
+function roadsideTrafficLight(){
+  const g=trafficLight();
+  g.scale.setScalar(.94);
+  g.userData.radius=.78;
+  return g;
+}
+
+const roadsideLights=[];
+[
+  [-5.4,-12],[5.3,-24],[-5.2,-36],[5.4,-48],[-5.3,-60],[5.2,-72],[-5.4,-84],[5.3,-96],
+  [-5.3,-108],[5.2,-120],[-5.4,-132],[5.3,-144],[-5.2,-156],[5.4,-168],[-5.3,-180],[5.2,-192],
+  [-5.4,-204],[5.3,-216]
+].forEach(([x,z])=>{
+  const s=roadsideTrafficLight();
+  s.position.set(x,0,z);
+  s.userData.baseZ=z;
+  roadsideLights.push(s);
+  scene.add(s);
+});
+
+function createCityCar(color=0xc43131){
+  const g=new THREE.Group();
+
+  const bodyMat=new THREE.MeshStandardMaterial({color,roughness:.28,metalness:.55});
+  const darkTrim=new THREE.MeshStandardMaterial({color:0x111419,roughness:.62,metalness:.28});
+  const windowMat=new THREE.MeshStandardMaterial({color:0x16232c,roughness:.05,metalness:.18,transparent:true,opacity:.7});
+  const lightMat=new THREE.MeshStandardMaterial({color:0xf7f2d2,emissive:0xffd179,emissiveIntensity:2.2});
+  const tailMat=new THREE.MeshStandardMaterial({color:0xff4638,emissive:0xff3222,emissiveIntensity:2.2});
+
+  const chassis=new THREE.Mesh(new THREE.BoxGeometry(2.2,.38,1.08),bodyMat);
+  chassis.position.y=.58; g.add(chassis);
+
+  const cabin=new THREE.Mesh(new THREE.BoxGeometry(1.18,.46,.94),bodyMat);
+  cabin.position.set(-.1,.98,0); g.add(cabin);
+
+  const hood=new THREE.Mesh(new THREE.BoxGeometry(.68,.16,.98),bodyMat);
+  hood.position.set(.78,.82,0); g.add(hood);
+
+  const glass=new THREE.Mesh(new THREE.BoxGeometry(.88,.24,.86),windowMat);
+  glass.position.set(-.08,1.03,0); g.add(glass);
+
+  const bumperFront=new THREE.Mesh(new THREE.BoxGeometry(.16,.22,1.02),darkTrim);
+  bumperFront.position.set(1.16,.45,0); g.add(bumperFront);
+  const bumperRear=new THREE.Mesh(new THREE.BoxGeometry(.16,.22,1.02),darkTrim);
+  bumperRear.position.set(-1.16,.45,0); g.add(bumperRear);
+
+  for(const z of [-.42,.42]){
+    const head=new THREE.Mesh(new THREE.BoxGeometry(.10,.12,.16),lightMat);
+    head.position.set(1.03,.68,z); g.add(head);
+    const tail=new THREE.Mesh(new THREE.BoxGeometry(.10,.12,.16),tailMat);
+    tail.position.set(-1.03,.68,z); g.add(tail);
+  }
+
+  const wheelMat=new THREE.MeshStandardMaterial({color:0x060708,roughness:.9,metalness:.06});
+  const rimMat=new THREE.MeshStandardMaterial({color:0xa5adb6,roughness:.22,metalness:.95});
+  for(const x of [-.72,.72]){
+    for(const z of [-.52,.52]){
+      const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.24,.24,.18,18),wheelMat);
+      wheel.rotation.z=Math.PI/2;
+      wheel.position.set(x,.26,z); g.add(wheel);
+      const rim=new THREE.Mesh(new THREE.CylinderGeometry(.13,.13,.19,16),rimMat);
+      rim.rotation.z=Math.PI/2;
+      rim.position.set(x,.26,z); g.add(rim);
+    }
+  }
+
+  g.userData.radius=1.08;
+  return g;
+}
+
+const crossCars=[];
+[
+  {z:-30,direction:1,color:0x3259d9,scale:1.00,speed:5.2},
+  {z:-58,direction:-1,color:0xc83232,scale:.96,speed:4.8},
+  {z:-92,direction:1,color:0x8c939d,scale:1.04,speed:5.5},
+  {z:-126,direction:-1,color:0x2f9a77,scale:.98,speed:4.6},
+  {z:-160,direction:1,color:0xf28b22,scale:.94,speed:5.0},
+  {z:-194,direction:-1,color:0x6b52c8,scale:1.02,speed:4.9}
+].forEach(cfg=>{
+  const car=createCityCar(cfg.color);
+  car.scale.setScalar(cfg.scale);
+  car.rotation.y=cfg.direction>0 ? -Math.PI/2 : Math.PI/2;
+  car.position.set(cfg.direction>0 ? -11.6 : 11.6,0,cfg.z);
+  car.userData.baseZ=cfg.z;
+  car.userData.direction=cfg.direction;
+  car.userData.speed=cfg.speed;
+  car.userData.xStart=cfg.direction>0 ? -11.6 : 11.6;
+  car.userData.xEnd=cfg.direction>0 ? 11.6 : -11.6;
+  car.userData.radius=1.08;
+  crossCars.push(car);
+  scene.add(car);
+});
+
+
+// ---------- OBSTACLES ----------
+function cone(){
+  const g=new THREE.Group();
+  const c=new THREE.Mesh(
+    new THREE.ConeGeometry(.3,.72,18),
+    new THREE.MeshStandardMaterial({color:0xff641f,roughness:.72})
+  );
+  c.position.y=.36;g.add(c);
+
+  const stripe=new THREE.Mesh(
+    new THREE.CylinderGeometry(.22,.25,.11,18),
+    new THREE.MeshBasicMaterial({color:0xf1f1ee})
+  );
+  stripe.position.y=.31;g.add(stripe);
+
+  const base=new THREE.Mesh(new THREE.BoxGeometry(.58,.07,.58),darkMat);
+  base.position.y=.035;g.add(base);
+  g.userData.radius=.58;
+  return g;
+}
+function barrier(){
+  const g=new THREE.Group();
+  const body=new THREE.Mesh(
+    new THREE.BoxGeometry(1.38,.66,.26),
+    new THREE.MeshStandardMaterial({color:0xf4f4f0,roughness:.72})
+  );
+  body.position.y=.53;g.add(body);
+
+  for(let i=-1;i<=1;i++){
+    const s=new THREE.Mesh(
+      new THREE.BoxGeometry(.24,.66,.035),
+      new THREE.MeshBasicMaterial({color:0xdf3d31})
+    );
+    s.position.set(i*.44,.53,.15);
+    s.rotation.z=-.22;
+    g.add(s);
+  }
+  g.userData.radius=.88;
+  return g;
+}
+function parkedBike(){
+  const b=createPulsarLikeBike(0x242a31);
+  b.scale.setScalar(.78);
+  b.userData.radius=.72;
+  return b;
+}
+
+const obstacles=[];
+const plan=[
+  [-14,0,"cone"],
+  [-22,-2.45,"traffic"],
+  [-30,2.45,"bike"],
+  [-38,0,"traffic"],
+  [-47,2.45,"barrier"],
+  [-56,-2.45,"cone"],
+  [-66,0,"traffic"],
+  [-76,-2.45,"bike"],
+  [-87,2.45,"traffic"],
+  [-98,0,"barrier"],
+  [-109,-2.45,"traffic"],
+  [-120,2.45,"cone"],
+  [-131,0,"bike"],
+  [-143,2.45,"traffic"],
+  [-155,-2.45,"barrier"],
+  [-166,0,"traffic"],
+  [-177,2.45,"cone"]
+];
+for(const [z,x,type] of plan){
+  const o=type==="cone" ? cone()
+    : type==="barrier" ? barrier()
+    : type==="traffic" ? trafficLight()
+    : parkedBike();
+  o.position.set(x,0,z);
+  o.userData.baseZ=z;
+  o.userData.hit=false;
+  obstacles.push(o);
+  scene.add(o);
+}
+
+// ---------- FINISH GATE ----------
+const gate=new THREE.Group();
+const gateMat=new THREE.MeshStandardMaterial({color:0xeeeeef,roughness:.5});
+for(const x of [-3.6,3.6]){
+  const p=new THREE.Mesh(new THREE.BoxGeometry(.18,3.6,.18),gateMat);
+  p.position.set(x,1.8,0);gate.add(p);
+}
+const top=new THREE.Mesh(new THREE.BoxGeometry(7.4,.22,.22),gateMat);
+top.position.y=3.5;gate.add(top);
+
+for(let i=0;i<12;i++){
+  const tile=new THREE.Mesh(
+    new THREE.BoxGeometry(.58,.42,.03),
+    new THREE.MeshBasicMaterial({color:i%2?0x111111:0xffffff})
+  );
+  tile.position.set(-3.18+i*.58,3.5,.13);
+  gate.add(tile);
+}
+gate.position.z=-530;
+scene.add(gate);
+
+// ---------- PARTICLES ----------
+const count=240;
+const pos=new Float32Array(count*3);
+for(let i=0;i<count;i++){
+  pos[i*3]=(Math.random()-.5)*34;
+  pos[i*3+1]=Math.random()*12+1;
+  pos[i*3+2]=-Math.random()*70+12;
+}
+const pg=new THREE.BufferGeometry();
+pg.setAttribute("position",new THREE.BufferAttribute(pos,3));
+scene.add(new THREE.Points(pg,new THREE.PointsMaterial({color:0xffffff,size:.028,transparent:true,opacity:.5})));
+
+
+// ---------- FRASES EN EL CIELO ----------
+const skyMessages=[
+  {
+    at:18,
+    title:"Amo cómo haces que los días simples se sientan especiales.",
+    note:"Porque contigo lo cotidiano también tiene algo bonito."
+  },
+  {
+    at:58,
+    title:"Amo tu forma de estar, incluso sin decir demasiado.",
+    note:"Porque tu presencia ya cambia mi día."
+  },
+  {
+    at:104,
+    title:"Amo la tranquilidad que siento cuando estoy contigo.",
+    note:"Porque contigo siento hogar, incluso lejos de casa."
+  },
+  {
+    at:150,
+    title:"Amo cómo me haces sonreír sin intentarlo.",
+    note:"Porque hay momentos tuyos que se me quedan todo el día."
+  },
+  {
+    at:196,
+    title:"Amo que seas tú.",
+    note:"Sin adornos. Sin cambiar nada."
+  }
+];
+
+let lastSkyIndex=-1;
+let skyHideTimer=null;
+
+function showSkyMessage(index){
+  if(index===lastSkyIndex || !skyMessages[index]) return;
+  lastSkyIndex=index;
+  const m=skyMessages[index];
+  skyPhrase.innerHTML=`${m.title}<small>${m.note}</small>`;
+  skyPhrase.classList.add("show");
+  skyGlow.classList.add("show");
+
+  clearTimeout(skyHideTimer);
+  skyHideTimer=setTimeout(()=>{
+    skyPhrase.classList.remove("show");
+    skyGlow.classList.remove("show");
+  },2200);
+}
+
+
+// ---------- MOTOS VOLADORAS / CRUCES CINEMATOGRÁFICOS ----------
+const flyingBikes=[];
+
+function addFlyingBike(color, scale, phase, direction, yBase, zBase){
+  const b=createPulsarLikeBike(color);
+  b.scale.setScalar(scale);
+  b.userData.phase=phase;
+  b.userData.direction=direction;
+  b.userData.yBase=yBase;
+  b.userData.zBase=zBase;
+  b.visible=false;
+  flyingBikes.push(b);
+  scene.add(b);
+  return b;
+}
+
+addFlyingBike(0x20252d,.56,.05, 1,3.5,-7);
+addFlyingBike(0xc9232b,.48,.23,-1,5.1,-12);
+addFlyingBike(0xe06b24,.44,.46, 1,4.2,-17);
+addFlyingBike(0x232b35,.50,.68,-1,6.0,-20);
+addFlyingBike(0xb91e26,.42,.84, 1,3.9,-10);
+addFlyingBike(0x3d495d,.46,.12,-1,4.6,-24);
+addFlyingBike(0xef7628,.40,.34, 1,5.5,-15);
+addFlyingBike(0xd31f2b,.45,.57,-1,4.1,-27);
+addFlyingBike(0x20242b,.43,.76, 1,5.8,-22);
+
+function updateFlyingBikes(t){
+  if(!playing){
+    flyingBikes.forEach(b=>b.visible=false);
+    streak1.style.opacity=0;
+    streak2.style.opacity=0;
+    return;
+  }
+
+  flyingBikes.forEach((b,i)=>{
+    const cycle=(distance/145 + b.userData.phase) % 1;
+    const active=cycle<.42;
+    b.visible=active;
+
+    if(active){
+      const q=cycle/.42;
+      const dir=b.userData.direction;
+      const x=dir>0 ? -8.5+q*17 : 8.5-q*17;
+      const arc=Math.sin(q*Math.PI);
+      b.position.set(
+        x,
+        b.userData.yBase + arc*2.1,
+        b.userData.zBase + q*2.5
+      );
+      b.rotation.x=.06-Math.sin(q*Math.PI)*.12;
+      b.rotation.y=dir>0 ? -1.08+q*.24 : 1.08-q*.24;
+      b.rotation.z=dir>0 ? -.26+q*.52 : .26-q*.52;
+      spinWheels(b, .11 + speed*.004);
+    }
+  });
+
+  const glow=(Math.sin(t*2.2)+1)/2;
+  streak1.style.opacity=playing ? .2+.35*glow : 0;
+  streak2.style.opacity=playing ? .15+.28*(1-glow) : 0;
+  streak1.style.left=(10+(distance*1.6)%70)+"%";
+  streak1.style.top="26%";
+  streak1.style.transform="rotate(-8deg)";
+  streak2.style.left=(70-(distance*1.1)%55)+"%";
+  streak2.style.top="38%";
+  streak2.style.transform="rotate(7deg)";
+}
+
+// ---------- GAME STATE ----------
+let playing=false;
+let finished=false;
+let distance=0;
+let speed=0;
+let targetSpeed=0;
+let lives=3;
+let bikeX=0;
+let touchSteer=0;
+let touchAccelerate=false;
+let touchBrake=false;
+let touchNitro=false;
+let invulnerable=0;
+let nitro=100;
+let paused=false;
+let previewMode=false;
+let previewYaw=0;
+let previewPitch=.26;
+let previewDistance=15;
+let dragging=false;
+let lastMouseX=0;
+let lastMouseY=0;
+
+const FINISH_DISTANCE=680; // ruta urbana larga
+const MAX_SPEED=42;
+const SCENERY_LOOP=224;   // recicla la ciudad para que nunca queden tramos vacíos
+const OBSTACLE_LOOP=188;  // mantiene obstáculos repartidos hasta la recta final
+
+function hud(){
+  distanceEl.textContent=Math.floor(distance)+" m";
+  speedEl.textContent=Math.floor(speed*4.1)+" km/h";
+  livesEl.textContent=lives;
+  progressEl.style.width=Math.min(100,(distance/FINISH_DISTANCE)*100)+"%";
+  nitroBar.style.width=Math.max(0,nitro)+"%";
+}
+
+function message(text,ms=1200){
+  messageEl.textContent=text;
+  messageEl.classList.add("show");
+  clearTimeout(message.t);
+  message.t=setTimeout(()=>messageEl.classList.remove("show"),ms);
+}
+
+function reset(){
+  playing=false;finished=false;distance=0;speed=0;targetSpeed=0;lives=3;
+  bikeX=0;touchSteer=0;invulnerable=0;nitro=100;paused=false;lastSkyIndex=-1;
+  skyPhrase.classList.remove('show');
+  skyGlow.classList.remove('show');
+  pauseLayer.classList.remove('show');
+  cockpitLayer.classList.remove('show','ready');
+  cockpitSpeedline.classList.remove('show');
+  preRide=false;cockpitReady=false;
+  clearTimeout(cockpitTimer);
+  nitroBar.style.width='100%';
+  if(bike.userData.turboFlame){
+    bike.userData.turboFlame.visible=false;
+    bike.userData.flameLight.intensity=0;
+  }
+
+  bike.position.x=0;
+  bike.rotation.set(0,0,0);
+  shadow.position.x=0;
+
+  roadSegments.forEach((s,i)=>s.position.z=-i*segLen);
+  poles.forEach(p=>p.obj.position.z=p.baseZ);
+
+  gyms.forEach(g=>{g.position.z=g.userData.baseZ;g.visible=true;});
+  gymRoadProps.forEach(g=>{g.position.z=g.userData.baseZ;g.visible=true;});
+  roadsideLights.forEach(s=>{s.position.z=s.userData.baseZ;s.visible=true;});
+  roadsideRoses.forEach(r=>{r.position.z=r.userData.baseZ;r.visible=true;});
+
+  ambientBikes.forEach(a=>{
+    a.bike.position.z=a.baseZ;
+    a.bike.visible=true;
+  });
+
+  crossCars.forEach(c=>{
+    c.position.set(c.userData.xStart,0,c.userData.baseZ);
+    c.visible=true;
+  });
+
+  obstacles.forEach(o=>{
+    o.position.z=o.userData.baseZ;
+    o.visible=true;
+    o.userData.hit=false;
+  });
+
+  fallingObjects.forEach(o=>{
+    o.position.y=7;
+    o.position.z=o.userData.baseZ;
+    o.visible=false;
+    o.userData.active=false;
+    o.userData.hit=false;
+  });
+
+  gate.position.z=-530;
+  hud();
+}
+
+function countdown(){
+  return new Promise(resolve=>{
+    const values=["3","2","1","YA"];
+    let i=0;
+    countdownEl.classList.add("show");
+    countdownEl.textContent=values[0];
+    const timer=setInterval(()=>{
+      i++;
+      if(i>=values.length){
+        clearInterval(timer);
+        countdownEl.classList.remove("show");
+        countdownEl.textContent="";
+        resolve();
+      }else countdownEl.textContent=values[i];
+    },600);
+  });
+}
+
+function updateMusicUI(){
+  const playingMusic=!rideMusic.paused;
+  musicStartBtn.innerHTML=playingMusic ? '❚❚ Música<span class="sub">Reproduciendo en bucle</span>' : '♫ Música<span class="sub">images/music.mp3</span>';
+  musicFloatBtn.textContent=playingMusic ? 'Pausar música' : 'Reanudar música';
+  musicFloatBtn.classList.toggle('playing',playingMusic);
+  musicFloatBtn.classList.toggle('paused',!playingMusic);
+  musicFloatBtn.classList.toggle('show',musicStarted);
+}
+
+async function toggleRideMusic(){
+  try{
+    if(rideMusic.paused){
+      await rideMusic.play();
+      musicStarted=true;
+    }else{
+      rideMusic.pause();
+    }
+    updateMusicUI();
+  }catch(err){
+    message('No pude reproducir images/music.mp3. Revisa que el archivo exista.',2200);
+  }
+}
+
+function start(){
+  previewMode=false;
+  roadPreviewBadge.classList.remove("show");
+  landingWrap.style.display="none";
+  document.body.classList.add("game-active");
+  window.scrollTo(0,0);
+  reset();
+  finish.classList.remove("show");
+  preRide=true;
+  cockpitLayer.classList.add('show');
+  cockpitSpeedline.classList.add('show');
+  cockpitTimer=setTimeout(()=>{
+    cockpitReady=true;
+    cockpitLayer.classList.add('ready');
+    message('Enciende la música y acelera cuando estés listo.',1800);
+  },900);
+}
+
+async function beginRide(){
+  if(!preRide || !cockpitReady)return;
+  cockpitReady=false;
+  cockpitLayer.classList.remove('ready');
+  await new Promise(r=>setTimeout(r,260));
+  cockpitLayer.classList.remove('show');
+  cockpitSpeedline.classList.remove('show');
+  preRide=false;
+  await countdown();
+  playing=true;
+  paused=false;
+  pauseLayer.classList.remove('show');
+  targetSpeed=25;
+  message('680 m de ciudad: motos, gimnasios, semáforos, carros y turbo.',1700);
+}
+
+musicStartBtn.addEventListener('click',toggleRideMusic);
+musicFloatBtn.addEventListener('click',toggleRideMusic);
+accelerateBtn.addEventListener('click',beginRide);
+rideMusic.addEventListener('play',updateMusicUI);
+rideMusic.addEventListener('pause',updateMusicUI);
+rideMusic.addEventListener('ended',()=>{ if(musicStarted){ rideMusic.currentTime=0; rideMusic.play().catch(()=>{}); } });
+
+function gameOver(){
+  preRide=false;cockpitLayer.classList.remove('show','ready');cockpitSpeedline.classList.remove('show');
+  playing=false;
+  targetSpeed=0;
+  message("Te quedaste sin vidas.",1400);
+  setTimeout(()=>{
+    landingWrap.style.display="block";
+    document.body.classList.remove("game-active");
+    window.scrollTo({top:0,behavior:"smooth"});
+  },1200);
+}
+
+function finishGame(){
+  if(finished)return;
+  finished=true;
+  playing=false;
+  targetSpeed=0;
+  speed*=.5;
+  setTimeout(()=>finish.classList.add("show"),650);
+}
+
+
+// mouse interaction for road preview
+renderer.domElement.addEventListener("pointerdown",e=>{
+  if(!previewMode) return;
+  dragging=true;
+  lastMouseX=e.clientX;
+  lastMouseY=e.clientY;
+});
+addEventListener("pointerup",()=>dragging=false);
+addEventListener("pointermove",e=>{
+  if(!previewMode || !dragging) return;
+  const dx=e.clientX-lastMouseX;
+  const dy=e.clientY-lastMouseY;
+  previewYaw-=dx*.006;
+  previewPitch=THREE.MathUtils.clamp(previewPitch-dy*.004,-.05,.72);
+  lastMouseX=e.clientX;
+  lastMouseY=e.clientY;
+});
+renderer.domElement.addEventListener("wheel",e=>{
+  if(!previewMode) return;
+  e.preventDefault();
+  previewDistance=THREE.MathUtils.clamp(previewDistance+e.deltaY*.012,7,28);
+},{passive:false});
+
+// keyboard
+const keys={};
+addEventListener("keydown",e=>{
+  const k=e.key.toLowerCase();
+
+  if(k==="escape" && previewMode){
+    previewMode=false;
+    roadPreviewBadge.classList.remove("show");
+    landingWrap.style.display="block";
+    document.body.classList.remove("game-active");
+    window.scrollTo({top:document.getElementById("previewSection").offsetTop,behavior:"smooth"});
+    return;
+  }
+
+  if(k==="p" && playing){
+    paused=!paused;
+    pauseLayer.classList.toggle("show",paused);
+    return;
+  }
+
+  keys[k]=true;
+  if(["a","d","w","s","arrowleft","arrowright","arrowup","arrowdown","shift"].includes(k))e.preventDefault();
+});
+addEventListener("keyup",e=>keys[e.key.toLowerCase()]=false);
+addEventListener("blur",()=>{
+  touchSteer=0;
+  touchAccelerate=false;
+  touchBrake=false;
+  touchNitro=false;
+});
+
+function setTouch(v){touchSteer=v}
+function clearTouch(){touchSteer=0}
+["pointerdown","touchstart"].forEach(ev=>{
+  leftBtn.addEventListener(ev,e=>{e.preventDefault();setTouch(-1)},{passive:false});
+  rightBtn.addEventListener(ev,e=>{e.preventDefault();setTouch(1)},{passive:false});
+});
+["pointerup","pointercancel","touchend"].forEach(ev=>{
+  leftBtn.addEventListener(ev,clearTouch);
+  rightBtn.addEventListener(ev,clearTouch);
+});
+
+function bindHoldButton(btn,onDown,onUp){
+  if(!btn)return;
+  const down=e=>{e.preventDefault();onDown();};
+  const up=e=>{e.preventDefault();onUp();};
+  btn.addEventListener("pointerdown",down,{passive:false});
+  btn.addEventListener("pointerup",up,{passive:false});
+  btn.addEventListener("pointercancel",up,{passive:false});
+  btn.addEventListener("pointerleave",up,{passive:false});
+  btn.addEventListener("touchstart",down,{passive:false});
+  btn.addEventListener("touchend",up,{passive:false});
+}
+
+bindHoldButton(gasBtn,()=>touchAccelerate=true,()=>touchAccelerate=false);
+bindHoldButton(brakeBtn,()=>touchBrake=true,()=>touchBrake=false);
+bindHoldButton(turboBtn,()=>touchNitro=true,()=>touchNitro=false);
+
+playBtn.addEventListener("click",start);
+playBtn2.addEventListener("click",start);
+
+previewBtn.addEventListener("click",()=>{
+  previewMode=true;
+  playing=false;
+  finished=false;
+  landingWrap.style.display="none";
+  document.body.classList.add("game-active");
+  roadPreviewBadge.classList.add("show");
+  window.scrollTo(0,0);
+  camera.position.set(0,5.4,15);
+  camera.lookAt(0,.8,-35);
+});
+againBtn.addEventListener("click",()=>{finish.classList.remove("show");start()});
+closeBtn.addEventListener("click",()=>{
+  finish.classList.remove("show");
+  landingWrap.style.display="block";
+  document.body.classList.remove("game-active");
+  window.scrollTo({top:document.getElementById("previewSection").offsetTop,behavior:"smooth"});
+});
+
+function collisions(){
+  if(invulnerable>0)return;
+
+  const allColliders=[...obstacles,...fallingObjects,...crossCars];
+
+  for(const o of allColliders){
+    if(o.userData.hit||!o.visible)continue;
+
+    const dz=Math.abs(o.position.z-bike.position.z);
+    const dx=Math.abs(o.position.x-bike.position.x);
+    const r=o.userData.radius||.7;
+
+    if(dz<.86&&dx<r+.42){
+      o.userData.hit=true;
+      lives--;
+      invulnerable=1.1;
+      speed*=.5;
+
+      hitEl.classList.remove("flash");
+      void hitEl.offsetWidth;
+      hitEl.classList.add("flash");
+
+      message(lives>0?"Choque. Te quedan "+lives+" vidas.":"Sin vidas.",950);
+      hud();
+
+      if(lives<=0)gameOver();
+      break;
+    }
+  }
+}
+
+
+function updateSkyTheme(dt,t){
+  let desired=0;
+
+  if(preRide){
+    // Acercamiento cinematográfico desde la cámara de juego hacia el manillar.
+    const targetPos=new THREE.Vector3(0,1.42,5.05);
+    camera.position.lerp(targetPos,1-Math.exp(-dt*2.8));
+    camera.fov += (49-camera.fov)*dt*3.4;
+    camera.updateProjectionMatrix();
+    camera.lookAt(0,1.03,2.0);
+    bike.position.y=.53+Math.sin(t*3.4)*.004;
+    bike.rotation.z*=.94;
+    bike.rotation.y*=.94;
+    updateFlyingBikes(t);
+  }else if(previewMode){
+    desired=Math.floor((t/6)%skyThemes.length);
+  }else if(playing){
+    const p=Math.min(1,distance/FINISH_DISTANCE);
+    desired=Math.min(skyThemes.length-1,Math.floor(p*skyThemes.length));
+  }else{
+    desired=Math.floor((window.scrollY / Math.max(1,document.documentElement.scrollHeight-innerHeight))*skyThemes.length);
+    desired=Math.min(skyThemes.length-1,desired);
+  }
+
+  if(desired!==currentSkyTheme){
+    applySkyTheme(desired);
+  }
+
+  const theme=skyThemes[currentSkyTheme];
+  const lerpSpeed=1-Math.pow(.001,dt);
+
+  scene.background.lerp(theme.bg,lerpSpeed*.35);
+  scene.fog.color.lerp(theme.fog,lerpSpeed*.35);
+
+  const targetRed=new THREE.Color(theme.red);
+  const targetAmber=new THREE.Color(theme.amber);
+  red.color.lerp(targetRed,lerpSpeed*.45);
+  amber.color.lerp(targetAmber,lerpSpeed*.45);
+
+  orbA.style.transform=`translate(${Math.sin(t*.22)*28}px,${Math.cos(t*.18)*18}px)`;
+  orbB.style.transform=`translate(${Math.cos(t*.17)*24}px,${Math.sin(t*.21)*26}px)`;
+  orbC.style.transform=`translate(${Math.sin(t*.14)*18}px,${Math.cos(t*.16)*22}px)`;
+}
+
+const clock=new THREE.Clock();
+
+function spinWheels(b,s){
+  if(b.userData.rear)b.userData.rear.rotation.x+=s;
+  if(b.userData.front)b.userData.front.rotation.x+=s;
+}
+
+function animate(){
+  requestAnimationFrame(animate);
+
+  const dt=Math.min(clock.getDelta(),.035);
+  const t=clock.elapsedTime;
+
+  if(previewMode){
+    const target=new THREE.Vector3(0,.8,-34);
+    const cp=Math.cos(previewPitch);
+    camera.position.x=target.x+Math.sin(previewYaw)*cp*previewDistance;
+    camera.position.y=target.y+Math.sin(previewPitch)*previewDistance;
+    camera.position.z=target.z+Math.cos(previewYaw)*cp*previewDistance;
+    camera.lookAt(target);
+
+    ambientBikes.forEach((a,i)=>{
+      a.bike.visible=true;
+      a.bike.position.z=a.baseZ;
+      a.bike.position.y=.42+Math.sin(t*.6+i)*.02;
+    });
+
+    gyms.forEach(g=>{g.visible=true;g.position.z=g.userData.baseZ;});
+    gymRoadProps.forEach(g=>{g.visible=true;g.position.z=g.userData.baseZ;});
+    roadsideLights.forEach(s=>{s.visible=true;s.position.z=s.userData.baseZ;});
+    crossCars.forEach((c,i)=>{
+      c.visible=true;
+      const travel=((t*c.userData.speed*.08)+i*.21)%1;
+      c.position.x=THREE.MathUtils.lerp(c.userData.xStart,c.userData.xEnd,travel);
+      c.position.z=c.userData.baseZ;
+    });
+    flyingBikes.forEach((b,i)=>{
+      b.visible=true;
+      const q=(t*.08+b.userData.phase)%1;
+      const dir=b.userData.direction;
+      const x=dir>0?-9+q*18:9-q*18;
+      b.position.set(x,b.userData.yBase+Math.sin(q*Math.PI)*2,b.userData.zBase);
+      b.rotation.y=dir>0?-1.0:1.0;
+      b.rotation.z=dir>0?-.18:.18;
+    });
+
+  }else if(playing && !paused){
+    let input=touchSteer;
+    if(keys["a"]||keys["arrowleft"])input=-1;
+    if(keys["d"]||keys["arrowright"])input=1;
+
+    const accelerating = keys["w"] || keys["arrowup"] || touchAccelerate;
+    const braking = keys["s"] || keys["arrowdown"] || touchBrake;
+    const usingNitro = (keys["shift"] || touchNitro) && nitro>0;
+
+    targetSpeed = accelerating ? Math.min(MAX_SPEED,34+distance/120) : 24;
+    if(braking) targetSpeed = 12;
+
+    if(usingNitro){
+      targetSpeed = Math.min(54, targetSpeed + 15);
+      nitro = Math.max(0, nitro - dt*34);
+    }else{
+      nitro = Math.min(100, nitro + dt*7);
+    }
+
+    // Fuego real del escape durante el turbo. Parpadea y cambia de longitud para que no parezca una imagen pegada.
+    if(bike.userData.turboFlame){
+      const flame=bike.userData.turboFlame;
+      flame.visible=usingNitro;
+      if(usingNitro){
+        const pulse=.90+Math.sin(t*38)*.13+Math.random()*.10;
+        flame.scale.set(.88+Math.random()*.10,.88+Math.random()*.08,pulse*1.18);
+        flame.rotation.z=Math.sin(t*27)*.055;
+        bike.userData.flameOuter.material.opacity=.72+Math.random()*.20;
+        bike.userData.flameInner.material.opacity=.82+Math.random()*.16;
+        bike.userData.flameCore.material.opacity=.78+Math.random()*.18;
+        bike.userData.flameLight.intensity=4.5+Math.random()*4.5;
+      }else{
+        bike.userData.flameLight.intensity=0;
+      }
+    }
+
+    speed+=(targetSpeed-speed)*dt*(braking?3.2:1.75);
+
+    bikeX+=input*dt*(4.7+speed*.025);
+    bikeX=THREE.MathUtils.clamp(bikeX,-3,3);
+
+    const move=speed*dt*.8;
+    distance+=speed*dt*1.02;
+
+    for(let i=0;i<skyMessages.length;i++){
+      if(distance>=skyMessages[i].at && lastSkyIndex<i){
+        showSkyMessage(i);
+        break;
+      }
+    }
+
+    bike.position.x+=(bikeX-bike.position.x)*dt*8.5;
+    shadow.position.x=bike.position.x;
+
+    bike.rotation.z+=((-input*.16)-bike.rotation.z)*dt*8;
+    bike.rotation.y+=((-input*.055)-bike.rotation.y)*dt*7;
+    bike.position.y=.53+Math.sin(t*11)*.008;
+
+    spinWheels(bike,speed*dt*1.55);
+
+    roadSegments.forEach(s=>{
+      s.position.z+=move;
+      if(s.position.z>segLen)s.position.z-=segLen*segCount;
+    });
+
+    poles.forEach(p=>{
+      p.obj.position.z+=move;
+      if(p.obj.position.z>12)p.obj.position.z-=70;
+    });
+
+    // La decoración se recicla detrás de la niebla: siempre hay ciudad, motos y gym alrededor.
+    gyms.forEach(g=>{
+      g.position.z+=move;
+      if(g.position.z>18){
+        g.position.z-=SCENERY_LOOP;
+        g.visible=distance<FINISH_DISTANCE-35;
+      }
+    });
+    gymRoadProps.forEach(g=>{
+      g.position.z+=move;
+      if(g.position.z>14){
+        g.position.z-=SCENERY_LOOP;
+        g.visible=distance<FINISH_DISTANCE-30;
+      }
+    });
+    roadsideLights.forEach(s=>{
+      s.position.z+=move;
+      if(s.position.z>12){
+        s.position.z-=SCENERY_LOOP;
+        s.visible=distance<FINISH_DISTANCE-28;
+      }
+    });
+
+    roadsideRoses.forEach((r,i)=>{
+      r.position.z+=move;
+      r.rotation.z=Math.sin(t*1.7+r.userData.phase)*.025;
+      r.children.forEach((flower,j)=>{
+        if(flower.userData.bloom){
+          flower.userData.bloom.rotation.y=Math.sin(t*1.15+r.userData.phase+j)*.08;
+        }
+      });
+      if(r.position.z>12){
+        r.position.z-=SCENERY_LOOP;
+        r.visible=distance<FINISH_DISTANCE-24;
+      }
+    });
+
+    ambientBikes.forEach(a=>{
+      a.bike.position.z+=move;
+      if(a.bike.position.z>10){
+        a.bike.position.z-=SCENERY_LOOP;
+        a.bike.visible=distance<FINISH_DISTANCE-25;
+      }
+      spinWheels(a.bike,speed*dt*.45);
+    });
+
+    crossCars.forEach(c=>{
+      c.position.z+=move;
+      c.position.x+=c.userData.direction*dt*c.userData.speed;
+      if((c.userData.direction>0 && c.position.x>11.9) || (c.userData.direction<0 && c.position.x<-11.9)){
+        c.position.x=c.userData.xStart;
+      }
+      if(c.position.z>14){
+        c.position.z-=SCENERY_LOOP;
+        c.position.x=c.userData.xStart;
+        c.visible=distance<FINISH_DISTANCE-34;
+      }
+    });
+
+    obstacles.forEach(o=>{
+      o.position.z+=move;
+      if(o.position.z>9){
+        if(distance<FINISH_DISTANCE-80){
+          o.position.z-=OBSTACLE_LOOP;
+          o.visible=true;
+          o.userData.hit=false;
+        }else{
+          o.visible=false;
+        }
+      }
+      spinWheels(o,speed*dt*.45);
+    });
+
+    fallingObjects.forEach(o=>{
+      o.position.z+=move;
+      const progressTrigger=(distance/FINISH_DISTANCE);
+      if(!o.userData.active && progressTrigger>=o.userData.delay){
+        o.userData.active=true;
+        o.visible=true;
+      }
+      if(o.userData.active && o.visible){
+        o.position.y-=dt*(4.5+speed*.05);
+        o.rotation.x+=dt*3.2;
+        o.rotation.z+=dt*2.4;
+        if(o.position.y<.35)o.position.y=.35;
+        if(o.position.z>9)o.visible=false;
+      }
+    });
+
+    gate.position.z+=move;
+
+    camera.position.x+=((bike.position.x*.25)-camera.position.x)*dt*3.4;
+    camera.position.y+=((4.15+Math.abs(input)*.05)-camera.position.y)*dt*3;
+    camera.position.z += ((8.7 - (keys["shift"] && nitro>0 ? .45 : 0)) - camera.position.z)*dt*4;
+    camera.fov += (((keys["shift"] && nitro>0)?64:58)-camera.fov)*dt*5;
+    camera.updateProjectionMatrix();
+    camera.lookAt(bike.position.x*.16,.72,-6.1);
+
+    updateFlyingBikes(t);
+
+    if(invulnerable>0)invulnerable-=dt;
+    collisions();
+
+    if(distance>=FINISH_DISTANCE)finishGame();
+  }else if(playing && paused){
+    if(bike.userData.turboFlame){bike.userData.turboFlame.visible=false;bike.userData.flameLight.intensity=0;}
+    updateFlyingBikes(t);
+  }else{
+    if(bike.userData.turboFlame){bike.userData.turboFlame.visible=false;bike.userData.flameLight.intensity=0;}
+    speed+=(targetSpeed-speed)*dt*1.5;
+    bike.position.y=.53+Math.sin(t*3)*.006;
+    bike.rotation.z*=.97;
+    bike.rotation.y*=.97;
+    camera.position.x=Math.sin(t*.2)*.15;
+    camera.fov += (58-camera.fov)*dt*4;
+    camera.updateProjectionMatrix();
+    camera.lookAt(0,.7,-6);
+    updateFlyingBikes(t);
+  }
+
+  red.position.x=-6+Math.sin(t*.45)*1.3;
+  amber.position.x=6+Math.cos(t*.4)*1.3;
+
+  updateSkyTheme(dt,t);
+  hud();
+  renderer.render(scene,camera);
+}
+animate();
+
+addEventListener("resize",()=>{
+  camera.aspect=innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+});
+</script>
+</body>
+</html>
